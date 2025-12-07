@@ -1,18 +1,24 @@
+import Image from "next/image";
+
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-white py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-3 gap-8 mb-8">
+
           {/* Brand Section */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-              </div>
+            <div className="flex items-center gap-3 mb-4">
+              <Image
+                src="/mainlogo.png"        // your logo path
+                alt="SmartScribe Logo"
+                width={40}
+                height={40}
+                className="object-contain"
+              />
               <span className="font-bold text-xl">SmartScribe</span>
             </div>
+
             <p className="text-gray-400 text-sm leading-relaxed">
               AI-powered meeting notes that help you focus on what matters most.
             </p>
@@ -44,7 +50,7 @@ export default function Footer() {
               Have questions? We'd love to hear from you.
             </p>
             <a 
-              href="mailto:contact@smartscribe.com" 
+              href="/contactUS"
               className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold text-sm transition-colors"
             >
               Contact Us
@@ -55,7 +61,10 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 pt-8 text-center">
           <p className="text-gray-400 text-sm">
-            © 2025 SmartScribe — Built with passion by <span className="text-white font-semibold">Adan Fatima</span>, <span className="text-white font-semibold">Imaan Adrees</span> & <span className="text-white font-semibold">Maria Zaman</span>
+            © 2025 SmartScribe — Built with passion by 
+            <span className="text-white font-semibold"> Adan Fatima</span>, 
+            <span className="text-white font-semibold"> Imaan Adrees</span> &
+            <span className="text-white font-semibold"> Maria Zaman</span>
           </p>
         </div>
       </div>

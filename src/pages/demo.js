@@ -36,9 +36,6 @@ Replace with real APK file link when ready.`;
           </div>
           
           <div className="max-w-5xl mx-auto text-center relative z-10">
-            <div className="inline-block px-4 py-2 bg-indigo-500 rounded-full text-white text-sm font-semibold mb-6 animate-fade-in">
-              Interactive Demo
-            </div>
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 animate-fade-in">
               Experience SmartScribe
             </h1>
@@ -241,15 +238,6 @@ Replace with real APK file link when ready.`;
                 <div>
                   <strong className="text-gray-900">Microphone Access</strong>
                   <p className="text-sm">Required for audio recording</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <svg className="w-6 h-6 text-indigo-600 flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <div>
-                  <strong className="text-gray-900">Optional Internet</strong>
-                  <p className="text-sm">Works offline, syncs when online</p>
                 </div>
               </div>
             </div>

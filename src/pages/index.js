@@ -18,7 +18,7 @@ export default function Home() {
               <span className="block text-indigo-600">Actionable Insights</span>
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-10 leading-relaxed">
-              SmartScribe captures meetings offline, transforms speech into accurate transcripts, 
+              SmartScribe captures real-time meetings, transforms speech into accurate transcripts, 
               and generates intelligent summaries—so you can focus on what matters.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -56,9 +56,9 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Offline Recording</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Real-Time meeting Recording</h3>
               <p className="text-gray-600 leading-relaxed">
-                Record meetings without internet connection. Transcribe later when it's convenient for you.
+                Record Real-time meetings, and generate transcriptions for you.
               </p>
             </div>
 
@@ -82,7 +82,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">Smart Summaries</h3>
               <p className="text-gray-600 leading-relaxed">
-                Automatically generate meeting minutes with key decisions, action items, and important highlights.
+                Generate meeting minutes with key decisions, action items, and important highlights.
               </p>
             </div>
           </div>

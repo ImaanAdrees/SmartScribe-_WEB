@@ -4,8 +4,8 @@ import Footer from "@/components/Footer";
 export default function Features() {
   const features = [
     {
-      title: "Offline Recording",
-      desc: "Record meetings without internet connection. Transcribe later when you're back online.",
+      title: "Real-Time meeting Recording",
+      desc: "Record Real-time meetings, and generate transcriptions for you.",
       icon: (
         <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
@@ -36,15 +36,6 @@ export default function Features() {
       icon: (
         <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-        </svg>
-      )
-    },
-    {
-      title: "Speaker Identification",
-      desc: "Automatically detect and label different speakers throughout your meeting recordings.",
-      icon: (
-        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
         </svg>
       )
     },
@@ -163,7 +154,7 @@ export default function Features() {
                 <div className="text-gray-600 font-semibold">Accuracy Rate</div>
               </div>
               <div>
-                <div className="text-5xl font-bold text-indigo-600 mb-2">50+</div>
+                <div className="text-5xl font-bold text-indigo-600 mb-2">Multiple</div>
                 <div className="text-gray-600 font-semibold">Languages Supported</div>
               </div>
               <div>
