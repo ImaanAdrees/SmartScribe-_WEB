@@ -101,35 +101,12 @@ export default function AdminSidebar() {
   // =====================
   return (
     <>
-      {/* ========== MOBILE HAMBURGER BUTTON ========== */}
-      {isMobile && (
-        <button
-          className="fixed top-4 left-4 z-50 bg-indigo-600 text-white p-2 rounded-md shadow-md hover:bg-indigo-700 transition-colors lg:hidden"
-          onClick={() => setMobileOpen(true)}
-          aria-label="Open menu"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      )}
-
-      {/* ========== MOBILE OVERLAY ========== */}
-      {mobileOpen && isMobile && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-40 z-40" 
-          onClick={() => setMobileOpen(false)}
-          aria-label="Close menu"
-        />
-      )}
-
       {/* ========== MAIN SIDEBAR ========== */}
       <div
         className={`
           ${isCollapsed ? "w-20" : "w-64"}
           bg-white border-r border-gray-200 min-h-screen flex flex-col
-          transition-all duration-300 fixed lg:static z-50
-          ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+          transition-all duration-300 hidden lg:flex z-50
         `}
       >
         {/* ========== HEADER SECTION ========== */}
