@@ -114,22 +114,25 @@ export default function AdminSidebar() {
           )}
         </div>
 
-        {/* Collapse button for desktop */}
+        {/* Collapse Button Section */}
         {!isMobile && (
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="absolute -right-3 top-20 w-6 h-6 bg-indigo-600 rounded-full 
-              flex items-center justify-center text-white hover:bg-indigo-700 transition-colors shadow-lg"
-          >
-            <svg
-              className={`w-4 h-4 transition-transform duration-300 ${isCollapsed ? "rotate-180" : ""}`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <div className="px-4 py-3 flex justify-center border-b border-gray-200">
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="w-10 h-10 bg-indigo-600 rounded-full 
+                flex items-center justify-center text-white hover:bg-indigo-700 transition-colors shadow-md hover:shadow-lg"
+              title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
+              <svg
+                className={`w-5 h-5 transition-transform duration-300 ${isCollapsed ? "rotate-180" : ""}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+          </div>
         )}
 
         {/* Navigation */}
