@@ -57,15 +57,25 @@ const handleSubmit = async (e) => {
       }
     );
 
-    // Save admin token
+    // Save admin token and expiry time
     localStorage.setItem("adminToken", data.token);
+    if (data.expiresAt) {
+      localStorage.setItem("adminTokenExpiry", data.expiresAt);
+    }
 
     // Redirect to dashboard
     router.push("/admin/dashboard");
   } catch (error) {
-    setError(
-      error.response?.data?.message || "Admin login failed. Try again."
-    );
+    const errorMessage = error.response?.data?.message || "Admin login failed. Try again.";
+    
+    // Handle account lockout specifically
+    if (error.response?.status === 423) {
+      setError("Account temporarily locked due to multiple failed attempts. Please wait 30 minutes.");
+    } else if (error.response?.status === 429) {
+      setError("Too many login attempts. Please try again later.");
+    } else {
+      setError(errorMessage);
+    }
   } finally {
     setIsLoading(false);
   }

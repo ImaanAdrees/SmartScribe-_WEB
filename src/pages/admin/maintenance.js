@@ -1,7 +1,8 @@
 import AdminSidebar from "@/components/AdminSidebar";
 import { useState } from "react";
+import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 
-export default function SystemMaintenance() {
+function SystemMaintenance() {
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [autoBackup, setAutoBackup] = useState(true);
 
@@ -216,4 +217,12 @@ export default function SystemMaintenance() {
     </main>
   </div>
 );
+}
+
+export default function ProtectedSystemMaintenance() {
+  return (
+    <ProtectedAdminRoute>
+      <SystemMaintenance />
+    </ProtectedAdminRoute>
+  );
 }

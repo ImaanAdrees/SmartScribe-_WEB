@@ -2,8 +2,9 @@
 import { useState } from "react";
 import AdminSidebar from "@/components/AdminSidebar";
 import Link from "next/link";
+import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 
-export default function AdminDashboard() {
+function AdminDashboard() {
   const [showNotifications, setShowNotifications] = useState(false);
 
   const stats = [
@@ -174,5 +175,13 @@ export default function AdminDashboard() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function ProtectedDashboard() {
+  return (
+    <ProtectedAdminRoute>
+      <AdminDashboard />
+    </ProtectedAdminRoute>
   );
 }

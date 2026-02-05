@@ -1,7 +1,8 @@
 import AdminSidebar from "@/components/AdminSidebar";
 import { useState } from "react";
+import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 
-export default function SystemAnalytics() {
+function SystemAnalytics() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const activityLogs = [
@@ -163,5 +164,13 @@ export default function SystemAnalytics() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function ProtectedSystemAnalytics() {
+  return (
+    <ProtectedAdminRoute>
+      <SystemAnalytics />
+    </ProtectedAdminRoute>
   );
 }

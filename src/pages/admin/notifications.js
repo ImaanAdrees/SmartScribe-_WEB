@@ -1,7 +1,8 @@
 import AdminSidebar from "@/components/AdminSidebar";
 import { useState } from "react";
+import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 
-export default function Notifications() {
+function Notifications() {
   const [notificationType, setNotificationType] = useState("info");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
@@ -410,5 +411,13 @@ export default function Notifications() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function ProtectedNotifications() {
+  return (
+    <ProtectedAdminRoute>
+      <Notifications />
+    </ProtectedAdminRoute>
   );
 }

@@ -1,20 +1,69 @@
 import AdminSidebar from "@/components/AdminSidebar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
+import axios from "axios";
+import { getAdminToken } from "@/lib/auth";
 
-export default function UserManagement() {
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+
+function UserManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState("all");
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [deleteError, setDeleteError] = useState("");
 
-  const users = [
-    { id: 1, name: "John Doe", email: "john@example.com", role: "Student", joinDate: "2024-01-15", transcriptions: 45 },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", role: "Teacher", joinDate: "2024-02-20", transcriptions: 89 },
-    { id: 3, name: "Mike Johnson", email: "mike@example.com", role: "Others", joinDate: "2024-03-10", transcriptions: 32 },
-    { id: 4, name: "Sarah Williams", email: "sarah@example.com", role: "Student", joinDate: "2023-12-05", transcriptions: 12 },
-    { id: 5, name: "David Brown", email: "david@example.com", role: "Teacher", joinDate: "2024-01-28", transcriptions: 67 },
-    { id: 6, name: "Emily Davis", email: "emily@example.com", role: "Others", joinDate: "2024-04-02", transcriptions: 28 },
-    { id: 7, name: "Chris Wilson", email: "chris@example.com", role: "Student", joinDate: "2024-02-14", transcriptions: 54 },
-    { id: 8, name: "Lisa Anderson", email: "lisa@example.com", role: "Teacher", joinDate: "2024-03-22", transcriptions: 71 }
-  ];
+  useEffect(() => {
+    const loadUsers = async () => {
+      const token = getAdminToken();
+      if (!token) {
+        setError("Admin token missing. Please login again.");
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const { data } = await axios.get(`${API_URL}/api/users`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setUsers(Array.isArray(data?.users) ? data.users : []);
+      } catch (err) {
+        const message = err?.response?.data?.message || "Failed to load users";
+        setError(message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadUsers();
+  }, []);
+
+  const handleDelete = async (userId) => {
+    const token = getAdminToken();
+    if (!token) {
+      setDeleteError("Admin token missing. Please login again.");
+      return;
+    }
+
+    setDeleteError("");
+
+    try {
+      await axios.delete(`${API_URL}/api/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setUsers((prev) => prev.filter((user) => user.id !== userId));
+    } catch (err) {
+      const message = err?.response?.data?.message || "Failed to delete user";
+      setDeleteError(message);
+    }
+  };
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -34,7 +83,7 @@ export default function UserManagement() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
-                <p className="text-gray-600 mt-1">Manage user accounts and permissions</p>
+                <p className="text-gray-600 mt-1">Manage user accounts</p>
               </div>
             </div>
           </div>
@@ -66,7 +115,7 @@ export default function UserManagement() {
                   </svg>
                 </div>
               </div>
-              <p className="text-3xl font-bold text-gray-900">{users.filter(u => u.role === "Student").length}</p>
+              <p className="text-3xl font-bold text-gray-900">{users.filter((u) => u.role === "Student").length}</p>
             </div>
 
             <div className="bg-white rounded-2xl p-6 border border-gray-200">
@@ -78,7 +127,7 @@ export default function UserManagement() {
                   </svg>
                 </div>
               </div>
-              <p className="text-3xl font-bold text-gray-900">{users.filter(u => u.role === "Teacher").length}</p>
+              <p className="text-3xl font-bold text-gray-900">{users.filter((u) => u.role === "Teacher").length}</p>
             </div>
 
             <div className="bg-white rounded-2xl p-6 border border-gray-200">
@@ -90,7 +139,7 @@ export default function UserManagement() {
                   </svg>
                 </div>
               </div>
-              <p className="text-3xl font-bold text-gray-900">{users.filter(u => u.role === "Others").length}</p>
+              <p className="text-3xl font-bold text-gray-900">{users.filter((u) => u.role === "Other").length}</p>
             </div>
           </div>
 
@@ -121,13 +170,18 @@ export default function UserManagement() {
                 <option value="all">All Roles</option>
                 <option value="Student">Students</option>
                 <option value="Teacher">Teachers</option>
-                <option value="Others">Others</option>
+                <option value="Other">Other</option>
               </select>
             </div>
           </div>
 
           {/* Users Table */}
           <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            {deleteError ? (
+              <div className="px-6 py-4 text-sm text-red-600 border-b border-gray-200">
+                {deleteError}
+              </div>
+            ) : null}
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50 border-b border-gray-200">
@@ -140,43 +194,67 @@ export default function UserManagement() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {filteredUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-full flex items-center justify-center text-white font-bold">
-                            {user.name.charAt(0)}
-                          </div>
-                          <div>
-                            <p className="font-semibold text-gray-900">{user.name}</p>
-                            <p className="text-sm text-gray-500">{user.email}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
-                          user.role === "Student" ? "bg-green-100 text-green-700" :
-                          user.role === "Teacher" ? "bg-purple-100 text-purple-700" :
-                          "bg-orange-100 text-orange-700"
-                        }`}>
-                          {user.role}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{user.joinDate}</td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm font-semibold text-gray-900">{user.transcriptions}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
-                        </div>
+                  {isLoading ? (
+                    <tr>
+                      <td className="px-6 py-6 text-sm text-gray-600" colSpan={5}>
+                        Loading users...
                       </td>
                     </tr>
-                  ))}
+                  ) : error ? (
+                    <tr>
+                      <td className="px-6 py-6 text-sm text-red-600" colSpan={5}>
+                        {error}
+                      </td>
+                    </tr>
+                  ) : filteredUsers.length === 0 ? (
+                    <tr>
+                      <td className="px-6 py-6 text-sm text-gray-600" colSpan={5}>
+                        No users found.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredUsers.map((user) => (
+                      <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-full flex items-center justify-center text-white font-bold">
+                              {(user.name || "?").charAt(0)}
+                            </div>
+                            <div>
+                              <p className="font-semibold text-gray-900">{user.name}</p>
+                              <p className="text-sm text-gray-500">{user.email}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
+                            user.role === "Student" ? "bg-green-100 text-green-700" :
+                            user.role === "Teacher" ? "bg-purple-100 text-purple-700" :
+                            "bg-orange-100 text-orange-700"
+                          }`}>
+                            {user.role}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600">{user.joinDate || "-"}</td>
+                        <td className="px-6 py-4">
+                          <span className="text-sm font-semibold text-gray-900">{user.transcriptions}</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <button
+                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              title="Delete"
+                              onClick={() => handleDelete(user.id)}
+                            >
+                              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -184,5 +262,13 @@ export default function UserManagement() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function ProtectedUserManagement() {
+  return (
+    <ProtectedAdminRoute>
+      <UserManagement />
+    </ProtectedAdminRoute>
   );
 }

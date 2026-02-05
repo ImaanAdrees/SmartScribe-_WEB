@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Modal } from "@/components/ui/modal";
 import { Bell, Plus, Trash2 } from "lucide-react";
+import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 
 const AdminNotification = () => {
   const [notifications, setNotifications] = useState([
@@ -75,4 +76,12 @@ const AdminNotification = () => {
   );
 };
 
-export default AdminNotification;
+function ProtectedAdminNotification() {
+  return (
+    <ProtectedAdminRoute>
+      <AdminNotification />
+    </ProtectedAdminRoute>
+  );
+}
+
+export default ProtectedAdminNotification;
