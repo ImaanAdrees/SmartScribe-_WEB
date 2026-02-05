@@ -1,12 +1,13 @@
 "use client";
 import { useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 
-const router = useRouter();
+
 
 function AdminProfile() {
+  const router = useRouter();
   const [user, setUser] = useState({
     name: "Admin User",
     email: "admin@example.com",
