@@ -1,5 +1,9 @@
 "use client";
 import { useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+
+const router = useRouter();
 
 export default function AdminProfile() {
   const [user, setUser] = useState({
@@ -23,10 +27,35 @@ export default function AdminProfile() {
     console.log("Saved user", user);
   };
 
-  const handleLogout = () => {
-    console.log("Logged Out");
-    // Add actual logout logic here
-  };
+const handleLogout = async () => {
+  try {
+    const token = localStorage.getItem("adminToken");
+
+    await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/admin/logout`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+
+    // Remove token from storage
+    localStorage.removeItem("adminToken");
+
+    // Redirect to login
+    router.push("/admin/login");
+  } catch (error) {
+    console.error("Logout failed:", error.message);
+
+    // Force logout anyway (failsafe)
+    localStorage.removeItem("adminToken");
+    router.push("/admin/login");
+  }
+};
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">

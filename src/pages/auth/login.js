@@ -1,4 +1,6 @@
+"use client";
 import { useState } from "react";
+import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -16,25 +18,59 @@ export default function AdminLogin() {
   const ADMIN_EMAIL = "admin@smartscribe.com";
   const ADMIN_PASSWORD = "admin123";
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setIsLoading(true);
+  //   setError("");
     
-    // Simulate login process
-    setTimeout(() => {
-      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        // Successful login
-        console.log("Login successful!");
-        // Redirect to admin dashboard
-        router.push("/admin/dashboard");
-      } else {
-        // Failed login
-        setError("Invalid email or password. Please try again.");
-        setIsLoading(false);
+  //   // Simulate login process
+  //   setTimeout(() => {
+  //     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+  //       // Successful login
+  //       console.log("Login successful!");
+  //       // Redirect to admin dashboard
+  //       router.push("/admin/dashboard");
+  //     } else {
+  //       // Failed login
+  //       setError("Invalid email or password. Please try again.");
+  //       setIsLoading(false);
+  //     }
+  //   }, 1500);
+  // };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  setError("");
+
+  try {
+    const { data } = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/admin/login`,
+      {
+        email,
+        password,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    }, 1500);
-  };
+    );
+
+    // Save admin token
+    localStorage.setItem("adminToken", data.token);
+
+    // Redirect to dashboard
+    router.push("/admin/dashboard");
+  } catch (error) {
+    setError(
+      error.response?.data?.message || "Admin login failed. Try again."
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4 py-6">
