@@ -66,10 +66,41 @@ function AdminProfile() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Convert to base64
+      // Compress image using Canvas API
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfile({ ...profile, image: reader.result });
+        const img = new window.Image();
+        img.onload = () => {
+          // Create canvas and compress
+          const canvas = document.createElement('canvas');
+          const maxWidth = 500;
+          const maxHeight = 500;
+          let width = img.width;
+          let height = img.height;
+
+          // Calculate new dimensions
+          if (width > height) {
+            if (width > maxWidth) {
+              height = (height * maxWidth) / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = (width * maxHeight) / height;
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Convert to base64 with compression
+          const compressedImage = canvas.toDataURL('image/jpeg', 0.7);
+          setProfile({ ...profile, image: compressedImage });
+        };
+        img.src = reader.result;
       };
       reader.readAsDataURL(file);
     }
