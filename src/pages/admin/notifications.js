@@ -240,7 +240,6 @@ function Notifications() {
   };
 
   return (
-    <AdminLayout>
       <div className="px-4 sm:px-8 py-6">
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
@@ -621,14 +620,20 @@ function Notifications() {
           </div>
         </div>
       </div>
-    </AdminLayout>
+
   );
 }
 
-export default function ProtectedNotifications() {
+function ProtectedNotifications() {
   return (
     <ProtectedAdminRoute>
       <Notifications />
     </ProtectedAdminRoute>
   );
 }
+
+ProtectedNotifications.getLayout = function getLayout(page) {
+  return <AdminLayout>{page}</AdminLayout>;
+};
+
+export default ProtectedNotifications;

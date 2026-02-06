@@ -73,8 +73,7 @@ function UserManagement() {
   });
 
   return (
-    <AdminLayout>
-      <div className="p-8">
+    <div className="p-8">
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
@@ -252,15 +251,20 @@ function UserManagement() {
             </div>
           </div>
         </div>
-      </div>
-    </AdminLayout>
+    </div>
   );
 }
 
-export default function ProtectedUserManagement() {
+function ProtectedUserManagement() {
   return (
     <ProtectedAdminRoute>
       <UserManagement />
     </ProtectedAdminRoute>
   );
 }
+
+ProtectedUserManagement.getLayout = function getLayout(page) {
+  return <AdminLayout>{page}</AdminLayout>;
+};
+
+export default ProtectedUserManagement;

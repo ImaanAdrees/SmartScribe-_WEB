@@ -71,8 +71,7 @@ function AdminDashboard() {
   ];
 
   return (
-    <AdminLayout>
-      <div className="p-8">
+    <div className="p-8">
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
@@ -117,15 +116,21 @@ function AdminDashboard() {
 
             </div>
       </div>
-      </div>
-    </AdminLayout>
+    </div>
   );
 }
 
-export default function ProtectedDashboard() {
+function ProtectedDashboard() {
   return (
     <ProtectedAdminRoute>
       <AdminDashboard />
     </ProtectedAdminRoute>
   );
 }
+
+// Persistent layout - prevents sidebar/navbar from re-rendering
+ProtectedDashboard.getLayout = function getLayout(page) {
+  return <AdminLayout>{page}</AdminLayout>;
+};
+
+export default ProtectedDashboard;

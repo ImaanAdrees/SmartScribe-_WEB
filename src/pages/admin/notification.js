@@ -31,8 +31,7 @@ const AdminNotification = () => {
   };
 
   return (
-    <AdminLayout>
-      <div className="p-8">      
+    <div className="p-8">      
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <Bell className="w-6 h-6" /> Notifications
@@ -74,8 +73,7 @@ const AdminNotification = () => {
           </div>
         </Modal>
       )}
-      </div>
-    </AdminLayout>
+    </div>
   );
 };
 
@@ -86,5 +84,9 @@ function ProtectedAdminNotification() {
     </ProtectedAdminRoute>
   );
 }
+
+ProtectedAdminNotification.getLayout = function getLayout(page) {
+  return <AdminLayout>{page}</AdminLayout>;
+};
 
 export default ProtectedAdminNotification;

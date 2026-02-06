@@ -17,7 +17,6 @@ function SystemAnalytics() {
   ];
 
   return (
-    <AdminLayout>
       <div className="px-4 sm:px-8 py-6 space-y-8">
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -153,14 +152,19 @@ function SystemAnalytics() {
           </div>
 
       </div>
-    </AdminLayout>
   );
 }
 
-export default function ProtectedSystemAnalytics() {
+function ProtectedSystemAnalytics() {
   return (
     <ProtectedAdminRoute>
       <SystemAnalytics />
     </ProtectedAdminRoute>
   );
 }
+
+ProtectedSystemAnalytics.getLayout = function getLayout(page) {
+  return <AdminLayout>{page}</AdminLayout>;
+};
+
+export default ProtectedSystemAnalytics;

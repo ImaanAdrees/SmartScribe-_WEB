@@ -29,7 +29,6 @@ function SystemMaintenance() {
   ];
 
  return (
-  <AdminLayout>
     <div className="px-4 sm:px-8 py-6 space-y-10">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -205,14 +204,19 @@ function SystemMaintenance() {
         </div>
 
     </div>
-  </AdminLayout>
-);
+  );
 }
 
-export default function ProtectedSystemMaintenance() {
+function ProtectedSystemMaintenance() {
   return (
     <ProtectedAdminRoute>
       <SystemMaintenance />
     </ProtectedAdminRoute>
   );
 }
+
+ProtectedSystemMaintenance.getLayout = function getLayout(page) {
+  return <AdminLayout>{page}</AdminLayout>;
+};
+
+export default ProtectedSystemMaintenance;

@@ -4,6 +4,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 import AdminLayout from "@/components/AdminLayout";
+import Image from "next/image";
 
 
 function AdminProfile() {
@@ -48,21 +49,20 @@ const handleLogout = async () => {
     localStorage.removeItem("adminToken");
 
     // Redirect to login
-    router.push("/admin/login");
+    router.push("/auth/login");
   } catch (error) {
     console.error("Logout failed:", error.message);
 
     // Force logout anyway (failsafe)
     localStorage.removeItem("adminToken");
-    router.push("/admin/login");
+    router.push("/auth/login");
   }
 };
 
 
   return (
-    <AdminLayout>
-      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] bg-gray-50 px-4 py-8">
-        <div className="bg-white p-8 rounded-2xl shadow-md border border-gray-200 w-full max-w-md text-center">
+    <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] bg-gray-50 px-4 py-8">
+      <div className="bg-white p-8 rounded-2xl shadow-md border border-gray-200 w-full max-w-md text-center">
 
         {/* Hidden file input */}
         <input
@@ -75,7 +75,9 @@ const handleLogout = async () => {
 
         {/* Clickable Profile Image */}
         <label htmlFor="uploadImage" className="cursor-pointer inline-block">
-          <img
+          <Image
+          width={112}
+          height={112}
             src={user.image}
             alt="Profile"
             className="w-28 h-28 rounded-full mx-auto border-4 border-indigo-600 shadow-md hover:opacity-80 transition"
@@ -140,14 +142,19 @@ const handleLogout = async () => {
 
         </div>
       </div>
-    </AdminLayout>
   );
 }
 
-export default function ProtectedAdminProfile() {
+function ProtectedAdminProfile() {
   return (
     <ProtectedAdminRoute>
       <AdminProfile />
     </ProtectedAdminRoute>
   );
 }
+
+ProtectedAdminProfile.getLayout = function getLayout(page) {
+  return <AdminLayout>{page}</AdminLayout>;
+};
+
+export default ProtectedAdminProfile;
