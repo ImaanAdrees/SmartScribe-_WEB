@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -29,16 +30,16 @@ export default function Footer() {
             <h3 className="font-bold text-lg mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <a href="/" className="text-gray-400 hover:text-white transition-colors">Home</a>
+                <Link href="/" className="text-gray-400 hover:text-white transition-colors">Home</Link>
               </li>
               <li>
-                <a href="/about" className="text-gray-400 hover:text-white transition-colors">About</a>
+                <Link href="/about" className="text-gray-400 hover:text-white transition-colors">About</Link>
               </li>
               <li>
-                <a href="/features" className="text-gray-400 hover:text-white transition-colors">Features</a>
+                <Link href="/features" className="text-gray-400 hover:text-white transition-colors">Features</Link>
               </li>
               <li>
-                <a href="/demo" className="text-gray-400 hover:text-white transition-colors">Demo</a>
+                <Link href="/demo" className="text-gray-400 hover:text-white transition-colors">Demo</Link>
               </li>
             </ul>
           </div>
@@ -49,12 +50,12 @@ export default function Footer() {
             <p className="text-gray-400 text-sm mb-4">
               Have questions? We'd love to hear from you.
             </p>
-            <a 
+            <Link
               href="/contactUS"
               className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold text-sm transition-colors"
             >
               Contact Us
-            </a>
+            </Link>
           </div>
         </div>
 

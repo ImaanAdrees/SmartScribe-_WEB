@@ -1,15 +1,67 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import Link from "next/link";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
+import axios from "axios";
+import { getAdminToken } from "@/lib/auth";
+
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
 function AdminDashboard() {
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [statsError, setStatsError] = useState("");
+  const [statsData, setStatsData] = useState({
+    totalUsers: 0,
+    totalTranscriptions: 0,
+    totalSummaries: 0,
+    totalExports: 0,
+  });
+
+  useEffect(() => {
+    const loadStats = async () => {
+      const token = getAdminToken();
+      if (!token) {
+        setStatsError("Admin token missing. Please login again.");
+        setStatsLoading(false);
+        return;
+      }
+
+      try {
+        const { data } = await axios.get(`${API_URL}/api/users`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const users = Array.isArray(data?.users) ? data.users : [];
+        const totalTranscriptions = users.reduce(
+          (sum, user) => sum + (Number.isFinite(user.transcriptions) ? user.transcriptions : 0),
+          0
+        );
+
+        setStatsData({
+          totalUsers: users.length,
+          totalTranscriptions,
+          totalSummaries: 0,
+          totalExports: 0,
+        });
+      } catch (err) {
+        const message = err?.response?.data?.message || "Failed to load stats";
+        setStatsError(message);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+
+    loadStats();
+  }, []);
+
   const stats = [
     {
       title: "Total Users",
-      value: "1,234",
-      change: "+12.5%",
+      value: statsLoading ? "-" : statsData.totalUsers.toLocaleString(),
+      change: statsLoading ? "-" : "Updated",
       icon: (
         <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -17,12 +69,14 @@ function AdminDashboard() {
         </svg>
       ),
       bgColor: "bg-blue-50",
-      iconColor: "text-blue-600"
+      iconColor: "text-blue-600",
+      isClickable: true,
+      href: "/admin/users",
     },
     {
       title: "Transcriptions",
-      value: "5,678",
-      change: "+8.2%",
+      value: statsLoading ? "-" : statsData.totalTranscriptions.toLocaleString(),
+      change: statsLoading ? "-" : "Updated",
       icon: (
         <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -34,8 +88,8 @@ function AdminDashboard() {
     },
     {
       title: "Summaries Generated",
-      value: "3,456",
-      change: "+15.3%",
+      value: statsLoading ? "-" : statsData.totalSummaries.toLocaleString(),
+      change: statsLoading ? "-" : "Updated",
       icon: (
         <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -47,8 +101,8 @@ function AdminDashboard() {
     },
  {
   title: "Total Exports",
-  value: "89",
-  change: "+5.1%",
+  value: statsLoading ? "-" : statsData.totalExports.toLocaleString(),
+  change: statsLoading ? "-" : "Updated",
   icon: (
     <svg
       className="w-8 h-8"
@@ -80,20 +134,36 @@ function AdminDashboard() {
 
           {/* Stats Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-shadow">
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`${stat.bgColor} p-3 rounded-xl ${stat.iconColor}`}>
-                    {stat.icon}
+            {stats.map((stat, index) => {
+              const cardContent = (
+                <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`${stat.bgColor} p-3 rounded-xl ${stat.iconColor}`}>
+                      {stat.icon}
+                    </div>
+                    <span className="text-green-600 text-sm font-semibold bg-green-50 px-2 py-1 rounded-lg">
+                      {stat.change}
+                    </span>
                   </div>
-                  <span className="text-green-600 text-sm font-semibold bg-green-50 px-2 py-1 rounded-lg">
-                    {stat.change}
-                  </span>
+                  <h3 className="text-gray-600 text-sm font-medium mb-1">{stat.title}</h3>
+                  <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
                 </div>
-                <h3 className="text-gray-600 text-sm font-medium mb-1">{stat.title}</h3>
-                <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-              </div>
-            ))}
+              );
+
+              if (stat.isClickable && !statsLoading && !statsError) {
+                return (
+                  <Link key={index} href={stat.href} className="block">
+                    {cardContent}
+                  </Link>
+                );
+              }
+
+              return (
+                <div key={index} className={stat.isClickable ? "cursor-not-allowed" : undefined}>
+                  {cardContent}
+                </div>
+              );
+            })}
           </div>
 
           {/* Usage Graphs Section */}

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminNavbar from "@/components/AdminNavbar";
 import { useAdminContext } from "@/context/AdminContext";
-import { getAdminProfile } from "@/lib/auth";
+import { getAdminProfile, getAdminToken } from "@/lib/auth";
 
 export default function AdminLayout({ children }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -13,6 +13,10 @@ export default function AdminLayout({ children }) {
   useEffect(() => {
     const initializeAdminProfile = async () => {
       try {
+        const token = getAdminToken();
+        if (!token) {
+          return;
+        }
         const profile = await getAdminProfile();
         updateAdminProfile({
           name: profile.name || "Admin",
