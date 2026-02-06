@@ -162,3 +162,27 @@ export const logoutAdmin = async () => {
 export const isAuthenticated = () => {
   return !!getAdminToken();
 };
+
+/**
+ * Get admin profile (name, email, image)
+ */
+export const getAdminProfile = async () => {
+  const token = getAdminToken();
+  
+  if (!token) {
+    throw new Error("No token found");
+  }
+
+  try {
+    const { data } = await axios.get(`${API_URL}/api/auth/admin/profile`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return data.admin;
+  } catch (error) {
+    console.error("Get admin profile error:", error);
+    throw error;
+  }
+};

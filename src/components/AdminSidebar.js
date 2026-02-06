@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
+import { getAdminProfile } from "@/lib/auth";
 
 // =====================
 // Icon Components
@@ -44,6 +45,12 @@ export default function AdminSidebar({ onClose }) {
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [adminData, setAdminData] = useState({
+    name: "Admin User",
+    email: "admin@smartscribe.com",
+    image: null,
+  });
+  const [loading, setLoading] = useState(true);
 
   // =====================
   // Effects
@@ -61,6 +68,27 @@ export default function AdminSidebar({ onClose }) {
     checkScreen();
     window.addEventListener("resize", checkScreen);
     return () => window.removeEventListener("resize", checkScreen);
+  }, []);
+
+  // Fetch admin profile
+  useEffect(() => {
+    const fetchAdminProfile = async () => {
+      try {
+        const profile = await getAdminProfile();
+        setAdminData({
+          name: profile.name || "Admin User",
+          email: profile.email || "admin@smartscribe.com",
+          image: profile.image || null,
+        });
+      } catch (error) {
+        console.error("Failed to fetch admin profile:", error);
+        // Keep default values on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAdminProfile();
   }, []);
 
   // =====================
@@ -198,13 +226,25 @@ export default function AdminSidebar({ onClose }) {
               ${isCollapsed ? "justify-center" : ""}
             `}
           >
-            <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
-              A
-            </div>
+            {adminData.image ? (
+              <Image
+                src={adminData.image}
+                alt={adminData.name}
+                width={40}
+                height={40}
+                className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+              />
+            ) : (
+              <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
+                {adminData.name.charAt(0).toUpperCase()}
+              </div>
+            )}
             {!isCollapsed && (
-              <div>
-                <p className="text-sm font-semibold text-gray-900">Admin User</p>
-                <p className="text-xs text-gray-500">admin@smartscribe.com</p>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-gray-900 truncate">
+                  {!loading && adminData.name ? adminData.name : "Admin User"}
+                </p>
+                <p className="text-xs text-gray-500 truncate">{adminData.email}</p>
               </div>
             )}
           </div>

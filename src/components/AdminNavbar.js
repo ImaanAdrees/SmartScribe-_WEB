@@ -2,13 +2,38 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
+import { getAdminProfile } from "@/lib/auth";
 
 export default function AdminNavbar({ onMenuToggle }) {
   const router = useRouter();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [adminData, setAdminData] = useState({
+    name: "Admin",
+    email: "admin@smartscribe.com",
+    image: null,
+  });
+  const [loading, setLoading] = useState(true);
 
-  // Close dropdown when clicking outside
+  // Fetch admin profile and close dropdown when clicking outside
   useEffect(() => {
+    const fetchAdminProfile = async () => {
+      try {
+        const profile = await getAdminProfile();
+        setAdminData({
+          name: profile.name || "Admin",
+          email: profile.email || "admin@smartscribe.com",
+          image: profile.image || null,
+        });
+      } catch (error) {
+        console.error("Failed to fetch admin profile:", error);
+        // Keep default values on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAdminProfile();
+
     const handleClickOutside = (event) => {
       if (showProfileMenu && !event.target.closest('.profile-dropdown')) {
         setShowProfileMenu(false);
@@ -75,10 +100,22 @@ export default function AdminNavbar({ onMenuToggle }) {
                 }}
                 className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
               >
-                <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                  A
-                </div>
-                <span className="hidden sm:block text-sm font-semibold text-gray-900">Admin</span>
+                {adminData.image ? (
+                  <Image
+                    src={adminData.image}
+                    alt={adminData.name}
+                    width={32}
+                    height={32}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                    {adminData.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <span className="hidden sm:block text-sm font-semibold text-gray-900">
+                  {!loading && adminData.name ? adminData.name : "Admin"}
+                </span>
                 <svg className={`hidden sm:block w-4 h-4 text-gray-600 transition-transform ${showProfileMenu ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
