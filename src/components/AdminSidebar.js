@@ -40,11 +40,10 @@ const MaintenanceIcon = () => (
 // =====================
 // Main Component
 // =====================
-export default function AdminSidebar() {
+export default function AdminSidebar({ onClose }) {
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   // =====================
   // Effects
@@ -53,11 +52,10 @@ export default function AdminSidebar() {
     const checkScreen = () => {
       if (window.innerWidth < 1024) {
         setIsMobile(true);
-        setIsCollapsed(true);
+        setIsCollapsed(false); // Always show full width on mobile
       } else {
         setIsMobile(false);
         setIsCollapsed(false);
-        setMobileOpen(false);
       }
     };
     checkScreen();
@@ -106,7 +104,7 @@ export default function AdminSidebar() {
         className={`
           ${isCollapsed ? "w-20" : "w-64"}
           bg-white border-r border-gray-200 min-h-screen flex flex-col
-          transition-all duration-300 hidden lg:flex z-50
+          transition-all duration-300 z-50
         `}
       >
         {/* ========== HEADER SECTION ========== */}
@@ -119,10 +117,22 @@ export default function AdminSidebar() {
             className="rounded-lg" 
           />
           {!isCollapsed && (
-            <div>
+            <div className="flex-1">
               <h1 className="font-bold text-gray-900 text-lg">SmartScribe</h1>
               <p className="text-xs text-gray-500">Admin Panel</p>
             </div>
+          )}
+          {/* Close button for mobile */}
+          {isMobile && (
+            <button
+              onClick={() => onClose && onClose()}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors lg:hidden"
+              aria-label="Close menu"
+            >
+              <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           )}
         </div>
 
@@ -157,7 +167,7 @@ export default function AdminSidebar() {
                 <li key={item.name}>
                   <Link
                     href={item.href}
-                    onClick={() => setMobileOpen(false)}
+                    onClick={() => onClose && onClose()}
                     className={`
                       flex items-center gap-3 px-4 py-3 rounded-xl 
                       transition-all duration-200 
@@ -202,7 +212,10 @@ export default function AdminSidebar() {
           {/* Logout Button */}
           <Link
             href="/auth/login"
-            onClick={() => setMobileOpen(false)}
+            onClick={() => {
+              localStorage.removeItem("adminToken");
+              onClose && onClose();
+            }}
             className={`
               mt-2 flex items-center gap-2 px-4 py-2 text-sm 
               text-gray-600 hover:text-red-600 hover:bg-red-50 

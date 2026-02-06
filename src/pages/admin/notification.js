@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Modal } from "@/components/ui/modal";
 import { Bell, Plus, Trash2 } from "lucide-react";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
+import AdminLayout from "@/components/AdminLayout";
 
 const AdminNotification = () => {
   const [notifications, setNotifications] = useState([
@@ -30,7 +31,8 @@ const AdminNotification = () => {
   };
 
   return (
-    <div className="p-8">      
+    <AdminLayout>
+      <div className="p-8">      
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <Bell className="w-6 h-6" /> Notifications
@@ -72,7 +74,8 @@ const AdminNotification = () => {
           </div>
         </Modal>
       )}
-    </div>
+      </div>
+    </AdminLayout>
   );
 };
 

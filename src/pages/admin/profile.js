@@ -3,7 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
-
+import AdminLayout from "@/components/AdminLayout";
 
 
 function AdminProfile() {
@@ -60,8 +60,9 @@ const handleLogout = async () => {
 
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-md border border-gray-200 w-full max-w-md text-center">
+    <AdminLayout>
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] bg-gray-50 px-4 py-8">
+        <div className="bg-white p-8 rounded-2xl shadow-md border border-gray-200 w-full max-w-md text-center">
 
         {/* Hidden file input */}
         <input
@@ -137,8 +138,9 @@ const handleLogout = async () => {
           Logout
         </button>
 
+        </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 }
 

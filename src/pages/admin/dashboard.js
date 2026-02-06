@@ -1,12 +1,10 @@
 "use client";
 import { useState } from "react";
-import AdminSidebar from "@/components/AdminSidebar";
+import AdminLayout from "@/components/AdminLayout";
 import Link from "next/link";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 
 function AdminDashboard() {
-  const [showNotifications, setShowNotifications] = useState(false);
-
   const stats = [
     {
       title: "Total Users",
@@ -72,66 +70,14 @@ function AdminDashboard() {
 
   ];
 
-  const notifications = [
-    "New user registered successfully",
-    "Transcription completed for audio file",
-    "System maintenance planned at midnight"
-  ];
-
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
-
-      <main className="flex-1 overflow-y-auto">
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-          <div className="px-8 py-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-                <p className="text-gray-600 mt-1">Welcome back, Admin</p>
-              </div>
-
-              <div className="relative flex items-center gap-4">
-                <button
-                  onClick={() => setShowNotifications(!showNotifications)}
-                  className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                      d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                  </svg>
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-                </button>
-
-                {showNotifications && (
-                  <div className="absolute right-0 top-12 w-72 bg-white shadow-lg rounded-xl border border-gray-200 p-4 z-20">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-3">Notifications</h3>
-                    <ul className="space-y-2 text-sm text-gray-700">
-                      {notifications.map((note, index) => (
-                        <li key={index} className="p-2 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
-                          {note}
-                        </li>
-                      ))}
-                    </ul>
-                    <Link href={"/admin/notification"}>
-                      <button className="block w-full text-center text-indigo-600 mt-4 text-sm font-semibold hover:underline">
-                        See all notifications
-                      </button>
-                    </Link>
-                  </div>
-                )}
-
-                <div  className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-full flex items-center justify-center text-white font-bold">
-                  <Link href={"/admin/profile"}>A</Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Main Content */}
-        <div className="p-8">
+    <AdminLayout>
+      <div className="p-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-600 mt-1">Welcome back, Admin</p>
+        </div>
 
           {/* Stats Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -170,11 +116,9 @@ function AdminDashboard() {
               </div>
 
             </div>
-          </div>
-
-        </div>
-      </main>
-    </div>
+      </div>
+      </div>
+    </AdminLayout>
   );
 }
 

@@ -1,4 +1,4 @@
-import AdminSidebar from "@/components/AdminSidebar";
+import AdminLayout from "@/components/AdminLayout";
 import { useEffect, useState } from "react";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 import axios from "axios";
@@ -73,21 +73,13 @@ function UserManagement() {
   });
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
-      
-      <main className="flex-1 overflow-y-auto">
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-          <div className="px-8 py-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
-                <p className="text-gray-600 mt-1">Manage user accounts</p>
-              </div>
-            </div>
-          </div>
-        </header>
+    <AdminLayout>
+      <div className="p-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
+          <p className="text-gray-600 mt-1">Manage user accounts</p>
+        </div>
 
         {/* Main Content */}
         <div className="p-8">
@@ -260,8 +252,8 @@ function UserManagement() {
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </AdminLayout>
   );
 }
 

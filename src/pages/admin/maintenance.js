@@ -1,4 +1,4 @@
-import AdminSidebar from "@/components/AdminSidebar";
+import AdminLayout from "@/components/AdminLayout";
 import { useState } from "react";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 
@@ -29,35 +29,26 @@ function SystemMaintenance() {
   ];
 
  return (
-  <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
-    <AdminSidebar />
+  <AdminLayout>
+    <div className="px-4 sm:px-8 py-6 space-y-10">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            System Maintenance
+          </h1>
+          <p className="text-gray-600 mt-1">Manage system updates and maintenance</p>
+        </div>
 
-    <main className="flex-1 overflow-y-auto">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="px-4 sm:px-8 py-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                System Maintenance
-              </h1>
-              <p className="text-gray-600 mt-1">Manage system updates and maintenance</p>
-            </div>
-
-            <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 sm:px-6 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all hover:shadow-lg">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+        <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 sm:px-6 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all hover:shadow-lg">
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                 />
               </svg>
               Upload new APK file
             </button>
           </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <div className="p-4 sm:p-8 space-y-10">
 
         {/* Top Stats - Now 3 Columns */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -213,9 +204,8 @@ function SystemMaintenance() {
           ))}
         </div>
 
-      </div>
-    </main>
-  </div>
+    </div>
+  </AdminLayout>
 );
 }
 
