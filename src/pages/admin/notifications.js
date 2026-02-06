@@ -2,6 +2,7 @@ import AdminLayout from "@/components/AdminLayout";
 import { useEffect, useState } from "react";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { getAdminToken } from "@/lib/auth";
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
@@ -164,18 +165,35 @@ function Notifications() {
     }
 
     try {
+      const audienceLabel = (() => {
+        switch (targetAudience) {
+          case "all":
+            return "all users";
+          case "students":
+            return "students";
+          case "teachers":
+            return "teachers";
+          case "user":
+            return `${selectedUserIds.length} selected user${selectedUserIds.length === 1 ? "" : "s"}`;
+          default:
+            return targetAudience;
+        }
+      })();
+
       const { data } = await axios.post(`${API_URL}/api/notifications`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      setShowSuccess(true);
-      setSuccessMessage(
+      const statusMessage =
         data?.status === "scheduled"
           ? "Notification scheduled successfully."
-          : "Notification sent successfully."
-      );
+          : "Notification sent successfully.";
+
+      setShowSuccess(true);
+      setSuccessMessage(statusMessage);
+      toast.success(`${statusMessage} (${audienceLabel})`);
 
       setTitle("");
       setMessage("");

@@ -1,10 +1,31 @@
 import { useState, useEffect } from "react";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminNavbar from "@/components/AdminNavbar";
+import { useAdminContext } from "@/context/AdminContext";
+import { getAdminProfile } from "@/lib/auth";
 
 export default function AdminLayout({ children }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { updateAdminProfile } = useAdminContext();
+
+  // Initialize admin profile on mount
+  useEffect(() => {
+    const initializeAdminProfile = async () => {
+      try {
+        const profile = await getAdminProfile();
+        updateAdminProfile({
+          name: profile.name || "Admin",
+          email: profile.email || "admin@smartscribe.com",
+          image: profile.image || null,
+        });
+      } catch (error) {
+        console.error("Failed to initialize admin profile:", error);
+      }
+    };
+
+    initializeAdminProfile();
+  }, [updateAdminProfile]);
 
   useEffect(() => {
     const checkScreen = () => {

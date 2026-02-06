@@ -6,11 +6,13 @@ import toast from "react-hot-toast";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 import AdminLayout from "@/components/AdminLayout";
 import Image from "next/image";
+import { useAdminContext } from "@/context/AdminContext";
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
 function AdminProfile() {
   const router = useRouter();
+  const { updateAdminProfile } = useAdminContext();
   const [tabActive, setTabActive] = useState("profile"); // profile or password
   
   // Profile state
@@ -125,6 +127,13 @@ function AdminProfile() {
       );
 
       if (response.data.success) {
+        // Update the admin context immediately for real-time updates
+        updateAdminProfile({
+          name: profile.name,
+          email: profile.email,
+          image: profile.image,
+        });
+        
         toast.success("✓ Profile updated successfully!");
         setEditableProfile(false);
       }

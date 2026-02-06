@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { getAdminProfile } from "@/lib/auth";
+import { useAdminContext } from "@/context/AdminContext";
 
 // =====================
 // Icon Components
@@ -43,14 +43,9 @@ const MaintenanceIcon = () => (
 // =====================
 export default function AdminSidebar({ onClose }) {
   const router = useRouter();
+  const { adminProfile } = useAdminContext();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [adminData, setAdminData] = useState({
-    name: "Admin User",
-    email: "admin@smartscribe.com",
-    image: null,
-  });
-  const [loading, setLoading] = useState(true);
 
   // =====================
   // Effects
@@ -68,27 +63,6 @@ export default function AdminSidebar({ onClose }) {
     checkScreen();
     window.addEventListener("resize", checkScreen);
     return () => window.removeEventListener("resize", checkScreen);
-  }, []);
-
-  // Fetch admin profile
-  useEffect(() => {
-    const fetchAdminProfile = async () => {
-      try {
-        const profile = await getAdminProfile();
-        setAdminData({
-          name: profile.name || "Admin User",
-          email: profile.email || "admin@smartscribe.com",
-          image: profile.image || null,
-        });
-      } catch (error) {
-        console.error("Failed to fetch admin profile:", error);
-        // Keep default values on error
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAdminProfile();
   }, []);
 
   // =====================
@@ -219,35 +193,37 @@ export default function AdminSidebar({ onClose }) {
         {/* ========== FOOTER SECTION (Profile & Logout) ========== */}
         <div className="p-4 border-t border-gray-200">
           {/* Profile Card */}
-          <div 
+          <Link
+            href="/admin/profile"
+            onClick={() => onClose && onClose()}
             className={`
               flex items-center gap-3 p-3 rounded-xl 
-              hover:bg-gray-50 transition-colors 
+              hover:bg-gray-50 transition-colors cursor-pointer
               ${isCollapsed ? "justify-center" : ""}
             `}
           >
-            {adminData.image ? (
+            {adminProfile.image ? (
               <Image
-                src={adminData.image}
-                alt={adminData.name}
+                src={adminProfile.image}
+                alt={adminProfile.name}
                 width={40}
                 height={40}
                 className="w-10 h-10 rounded-full object-cover flex-shrink-0"
               />
             ) : (
               <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
-                {adminData.name.charAt(0).toUpperCase()}
+                {adminProfile.name?.charAt(0).toUpperCase()}
               </div>
             )}
             {!isCollapsed && (
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-gray-900 truncate">
-                  {!loading && adminData.name ? adminData.name : "Admin User"}
+                  {adminProfile.name}
                 </p>
-                <p className="text-xs text-gray-500 truncate">{adminData.email}</p>
+                <p className="text-xs text-gray-500 truncate">{adminProfile.email}</p>
               </div>
             )}
-          </div>
+          </Link>
 
           {/* Logout Button */}
           <Link
