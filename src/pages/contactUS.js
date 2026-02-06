@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({
@@ -111,9 +112,9 @@ export default function ContactUs() {
         {/* Optional Contact Info */}
         <div className="mt-10 text-center text-gray-600 text-sm">
           Or reach us directly at:{" "}
-          <a href="mailto:contact@smartscribe.com" className="text-indigo-600 hover:underline">
+          <Link href="mailto:contact@smartscribe.com" className="text-indigo-600 hover:underline">
             contact@smartscribe.com
-          </a>
+          </Link>
         </div>
       </div>
     </div>
