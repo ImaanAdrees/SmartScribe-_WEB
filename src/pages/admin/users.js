@@ -1,7 +1,8 @@
-import AdminSidebar from "@/components/AdminSidebar";
+import AdminLayout from "@/components/AdminLayout";
 import { useEffect, useState } from "react";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { getAdminToken } from "@/lib/auth";
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
@@ -13,6 +14,8 @@ function UserManagement() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [deleteError, setDeleteError] = useState("");
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -42,7 +45,7 @@ function UserManagement() {
     loadUsers();
   }, []);
 
-  const handleDelete = async (userId) => {
+  const handleDelete = async (user) => {
     const token = getAdminToken();
     if (!token) {
       setDeleteError("Admin token missing. Please login again.");
@@ -52,17 +55,35 @@ function UserManagement() {
     setDeleteError("");
 
     try {
-      await axios.delete(`${API_URL}/api/users/${userId}`, {
+      await axios.delete(`${API_URL}/api/users/${user.id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      setUsers((prev) => prev.filter((user) => user.id !== userId));
+      setUsers((prev) => prev.filter((entry) => entry.id !== user.id));
+      toast.success(`${user.name} (${user.role}) deleted successfully.`);
     } catch (err) {
       const message = err?.response?.data?.message || "Failed to delete user";
       setDeleteError(message);
     }
+  };
+
+  const openDeleteModal = (user) => {
+    setDeleteError("");
+    setUserToDelete(user);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setUserToDelete(null);
+  };
+
+  const confirmDelete = async () => {
+    if (!userToDelete) return;
+    await handleDelete(userToDelete);
+    closeDeleteModal();
   };
 
   const filteredUsers = users.filter(user => {
@@ -73,21 +94,13 @@ function UserManagement() {
   });
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
-      
-      <main className="flex-1 overflow-y-auto">
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-          <div className="px-8 py-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
-                <p className="text-gray-600 mt-1">Manage user accounts</p>
-              </div>
-            </div>
-          </div>
-        </header>
+    <>
+    <div className="p-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
+          <p className="text-gray-600 mt-1">Manage user accounts</p>
+        </div>
 
         {/* Main Content */}
         <div className="p-8">
@@ -244,7 +257,7 @@ function UserManagement() {
                             <button
                               className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                               title="Delete"
-                              onClick={() => handleDelete(user.id)}
+                              onClick={() => openDeleteModal(user)}
                             >
                               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -260,15 +273,51 @@ function UserManagement() {
             </div>
           </div>
         </div>
-      </main>
     </div>
+    {isDeleteModalOpen && userToDelete ? (
+      <div
+        className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+        onClick={closeDeleteModal}
+      >
+        <div
+          className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h2 className="text-xl font-semibold text-gray-900">Delete user?</h2>
+          <p className="text-sm text-gray-600 mt-2">
+            This will permanently delete {userToDelete.name} ({userToDelete.role}).
+          </p>
+          <div className="flex items-center justify-end gap-3 mt-6">
+            <button
+              onClick={closeDeleteModal}
+              className="px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={confirmDelete}
+              className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    ) : null}
+    </>
   );
 }
 
-export default function ProtectedUserManagement() {
+function ProtectedUserManagement() {
   return (
     <ProtectedAdminRoute>
       <UserManagement />
     </ProtectedAdminRoute>
   );
 }
+
+ProtectedUserManagement.getLayout = function getLayout(page) {
+  return <AdminLayout>{page}</AdminLayout>;
+};
+
+export default ProtectedUserManagement;

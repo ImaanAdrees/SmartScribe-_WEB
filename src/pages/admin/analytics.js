@@ -1,4 +1,4 @@
-import AdminSidebar from "@/components/AdminSidebar";
+import AdminLayout from "@/components/AdminLayout";
 import { useState } from "react";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 
@@ -17,36 +17,26 @@ function SystemAnalytics() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <AdminSidebar />
-
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-          <div className="px-4 sm:px-8 py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">System Analytics</h1>
-              <p className="text-gray-600 mt-1 text-sm sm:text-base">Monitor system usage and performance</p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 gap-2">
-              <select className="px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 outline-none font-semibold text-gray-700 text-sm sm:text-base">
-                <option>Last 7 Days</option>
-                <option>Last 30 Days</option>
-                <option>Last 90 Days</option>
-                <option>All Time</option>
-              </select>
-              <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 sm:px-6 py-2 rounded-xl font-semibold flex items-center gap-2 transition-all text-sm sm:text-base">
-                Export Report
-              </button>
-            </div>
+      <div className="px-4 sm:px-8 py-6 space-y-8">
+        {/* Page Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">System Analytics</h1>
+            <p className="text-gray-600 mt-1 text-sm sm:text-base">Monitor system usage and performance</p>
           </div>
-        </header>
 
-        {/* Main Content */}
-        <div className="px-4 sm:px-8 py-6 space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 gap-2">
+            <select className="px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 outline-none font-semibold text-gray-700 text-sm sm:text-base">
+              <option>Last 7 Days</option>
+              <option>Last 30 Days</option>
+              <option>Last 90 Days</option>
+              <option>All Time</option>
+            </select>
+            <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 sm:px-6 py-2 rounded-xl font-semibold flex items-center gap-2 transition-all text-sm sm:text-base">
+              Export Report
+            </button>
+          </div>
+        </div>
 
           {/* Analytics Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -161,16 +151,20 @@ function SystemAnalytics() {
             </div>
           </div>
 
-        </div>
-      </main>
-    </div>
+      </div>
   );
 }
 
-export default function ProtectedSystemAnalytics() {
+function ProtectedSystemAnalytics() {
   return (
     <ProtectedAdminRoute>
       <SystemAnalytics />
     </ProtectedAdminRoute>
   );
 }
+
+ProtectedSystemAnalytics.getLayout = function getLayout(page) {
+  return <AdminLayout>{page}</AdminLayout>;
+};
+
+export default ProtectedSystemAnalytics;

@@ -1,7 +1,8 @@
-import AdminSidebar from "@/components/AdminSidebar";
+import AdminLayout from "@/components/AdminLayout";
 import { useEffect, useState } from "react";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { getAdminToken } from "@/lib/auth";
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
@@ -164,18 +165,35 @@ function Notifications() {
     }
 
     try {
+      const audienceLabel = (() => {
+        switch (targetAudience) {
+          case "all":
+            return "all users";
+          case "students":
+            return "students";
+          case "teachers":
+            return "teachers";
+          case "user":
+            return `${selectedUserIds.length} selected user${selectedUserIds.length === 1 ? "" : "s"}`;
+          default:
+            return targetAudience;
+        }
+      })();
+
       const { data } = await axios.post(`${API_URL}/api/notifications`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      setShowSuccess(true);
-      setSuccessMessage(
+      const statusMessage =
         data?.status === "scheduled"
           ? "Notification scheduled successfully."
-          : "Notification sent successfully."
-      );
+          : "Notification sent successfully.";
+
+      setShowSuccess(true);
+      setSuccessMessage(statusMessage);
+      toast.success(`${statusMessage} (${audienceLabel})`);
 
       setTitle("");
       setMessage("");
@@ -240,30 +258,23 @@ function Notifications() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
-      <AdminSidebar />
-      
-      <main className="flex-1 overflow-y-auto">
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-          <div className="px-4 sm:px-8 py-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Send Notifications</h1>
-                <p className="text-gray-600 mt-1">Broadcast messages to users about updates and changes</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="text-right">
-                  <p className="text-sm text-gray-600">Total Recipients</p>
-                  <p className="text-2xl font-bold text-indigo-600">{recipientCount}</p>
-                </div>
-              </div>
+      <div className="px-4 sm:px-8 py-6">
+        {/* Page Header */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Send Notifications</h1>
+            <p className="text-gray-600 mt-1">Broadcast messages to users about updates and changes</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <p className="text-sm text-gray-600">Total Recipients</p>
+              <p className="text-2xl font-bold text-indigo-600">{recipientCount}</p>
             </div>
           </div>
-        </header>
+        </div>
 
         {/* Main Content */}
-        <div className="p-4 sm:p-8">
+        <div className="space-y-6">
           {/* Success Message */}
           {showSuccess && (
             <div className="mb-6 p-4 bg-green-50 border-2 border-green-200 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between animate-fade-in gap-4">
@@ -626,15 +637,21 @@ function Notifications() {
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+
   );
 }
 
-export default function ProtectedNotifications() {
+function ProtectedNotifications() {
   return (
     <ProtectedAdminRoute>
       <Notifications />
     </ProtectedAdminRoute>
   );
 }
+
+ProtectedNotifications.getLayout = function getLayout(page) {
+  return <AdminLayout>{page}</AdminLayout>;
+};
+
+export default ProtectedNotifications;

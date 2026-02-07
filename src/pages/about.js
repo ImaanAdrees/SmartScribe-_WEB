@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Link from "next/link";
 
 export default function About() {
   const team = [
@@ -250,12 +251,12 @@ export default function About() {
             <p className="text-xl text-indigo-100 mb-10 leading-relaxed">
               Experience the future of meeting documentation with SmartScribe
             </p>
-            <a 
+            <Link
               href="/demo"
               className="inline-block bg-white text-indigo-600 hover:bg-gray-50 px-10 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-200 transform hover:scale-105"
             >
               Try SmartScribe Today
-            </a>
+            </Link>
           </div>
         </section>
       </main>

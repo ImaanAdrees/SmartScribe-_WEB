@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Modal } from "@/components/ui/modal";
 import { Bell, Plus, Trash2 } from "lucide-react";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
+import AdminLayout from "@/components/AdminLayout";
 
 const AdminNotification = () => {
   const [notifications, setNotifications] = useState([
@@ -83,5 +84,9 @@ function ProtectedAdminNotification() {
     </ProtectedAdminRoute>
   );
 }
+
+ProtectedAdminNotification.getLayout = function getLayout(page) {
+  return <AdminLayout>{page}</AdminLayout>;
+};
 
 export default ProtectedAdminNotification;

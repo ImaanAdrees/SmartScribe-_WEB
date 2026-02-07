@@ -1,17 +1,67 @@
 "use client";
-import { useState } from "react";
-import AdminSidebar from "@/components/AdminSidebar";
+import { useEffect, useState } from "react";
+import AdminLayout from "@/components/AdminLayout";
 import Link from "next/link";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
+import axios from "axios";
+import { getAdminToken } from "@/lib/auth";
+
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
 function AdminDashboard() {
-  const [showNotifications, setShowNotifications] = useState(false);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [statsError, setStatsError] = useState("");
+  const [statsData, setStatsData] = useState({
+    totalUsers: 0,
+    totalTranscriptions: 0,
+    totalSummaries: 0,
+    totalExports: 0,
+  });
+
+  useEffect(() => {
+    const loadStats = async () => {
+      const token = getAdminToken();
+      if (!token) {
+        setStatsError("Admin token missing. Please login again.");
+        setStatsLoading(false);
+        return;
+      }
+
+      try {
+        const { data } = await axios.get(`${API_URL}/api/users`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const users = Array.isArray(data?.users) ? data.users : [];
+        const totalTranscriptions = users.reduce(
+          (sum, user) => sum + (Number.isFinite(user.transcriptions) ? user.transcriptions : 0),
+          0
+        );
+
+        setStatsData({
+          totalUsers: users.length,
+          totalTranscriptions,
+          totalSummaries: 0,
+          totalExports: 0,
+        });
+      } catch (err) {
+        const message = err?.response?.data?.message || "Failed to load stats";
+        setStatsError(message);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+
+    loadStats();
+  }, []);
 
   const stats = [
     {
       title: "Total Users",
-      value: "1,234",
-      change: "+12.5%",
+      value: statsLoading ? "-" : statsData.totalUsers.toLocaleString(),
+      change: statsLoading ? "-" : "Updated",
       icon: (
         <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -19,12 +69,14 @@ function AdminDashboard() {
         </svg>
       ),
       bgColor: "bg-blue-50",
-      iconColor: "text-blue-600"
+      iconColor: "text-blue-600",
+      isClickable: true,
+      href: "/admin/users",
     },
     {
       title: "Transcriptions",
-      value: "5,678",
-      change: "+8.2%",
+      value: statsLoading ? "-" : statsData.totalTranscriptions.toLocaleString(),
+      change: statsLoading ? "-" : "Updated",
       icon: (
         <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -36,8 +88,8 @@ function AdminDashboard() {
     },
     {
       title: "Summaries Generated",
-      value: "3,456",
-      change: "+15.3%",
+      value: statsLoading ? "-" : statsData.totalSummaries.toLocaleString(),
+      change: statsLoading ? "-" : "Updated",
       icon: (
         <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -49,8 +101,8 @@ function AdminDashboard() {
     },
  {
   title: "Total Exports",
-  value: "89",
-  change: "+5.1%",
+  value: statsLoading ? "-" : statsData.totalExports.toLocaleString(),
+  change: statsLoading ? "-" : "Updated",
   icon: (
     <svg
       className="w-8 h-8"
@@ -72,83 +124,46 @@ function AdminDashboard() {
 
   ];
 
-  const notifications = [
-    "New user registered successfully",
-    "Transcription completed for audio file",
-    "System maintenance planned at midnight"
-  ];
-
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar />
-
-      <main className="flex-1 overflow-y-auto">
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-          <div className="px-8 py-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-                <p className="text-gray-600 mt-1">Welcome back, Admin</p>
-              </div>
-
-              <div className="relative flex items-center gap-4">
-                <button
-                  onClick={() => setShowNotifications(!showNotifications)}
-                  className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                      d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                  </svg>
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-                </button>
-
-                {showNotifications && (
-                  <div className="absolute right-0 top-12 w-72 bg-white shadow-lg rounded-xl border border-gray-200 p-4 z-20">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-3">Notifications</h3>
-                    <ul className="space-y-2 text-sm text-gray-700">
-                      {notifications.map((note, index) => (
-                        <li key={index} className="p-2 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
-                          {note}
-                        </li>
-                      ))}
-                    </ul>
-                    <Link href={"/admin/notification"}>
-                      <button className="block w-full text-center text-indigo-600 mt-4 text-sm font-semibold hover:underline">
-                        See all notifications
-                      </button>
-                    </Link>
-                  </div>
-                )}
-
-                <div  className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-full flex items-center justify-center text-white font-bold">
-                  <Link href={"/admin/profile"}>A</Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Main Content */}
-        <div className="p-8">
+    <div className="p-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-600 mt-1">Welcome back, Admin</p>
+        </div>
 
           {/* Stats Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-shadow">
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`${stat.bgColor} p-3 rounded-xl ${stat.iconColor}`}>
-                    {stat.icon}
+            {stats.map((stat, index) => {
+              const cardContent = (
+                <div className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`${stat.bgColor} p-3 rounded-xl ${stat.iconColor}`}>
+                      {stat.icon}
+                    </div>
+                    <span className="text-green-600 text-sm font-semibold bg-green-50 px-2 py-1 rounded-lg">
+                      {stat.change}
+                    </span>
                   </div>
-                  <span className="text-green-600 text-sm font-semibold bg-green-50 px-2 py-1 rounded-lg">
-                    {stat.change}
-                  </span>
+                  <h3 className="text-gray-600 text-sm font-medium mb-1">{stat.title}</h3>
+                  <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
                 </div>
-                <h3 className="text-gray-600 text-sm font-medium mb-1">{stat.title}</h3>
-                <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-              </div>
-            ))}
+              );
+
+              if (stat.isClickable && !statsLoading && !statsError) {
+                return (
+                  <Link key={index} href={stat.href} className="block">
+                    {cardContent}
+                  </Link>
+                );
+              }
+
+              return (
+                <div key={index} className={stat.isClickable ? "cursor-not-allowed" : undefined}>
+                  {cardContent}
+                </div>
+              );
+            })}
           </div>
 
           {/* Usage Graphs Section */}
@@ -170,18 +185,22 @@ function AdminDashboard() {
               </div>
 
             </div>
-          </div>
-
-        </div>
-      </main>
+      </div>
     </div>
   );
 }
 
-export default function ProtectedDashboard() {
+function ProtectedDashboard() {
   return (
     <ProtectedAdminRoute>
       <AdminDashboard />
     </ProtectedAdminRoute>
   );
 }
+
+// Persistent layout - prevents sidebar/navbar from re-rendering
+ProtectedDashboard.getLayout = function getLayout(page) {
+  return <AdminLayout>{page}</AdminLayout>;
+};
+
+export default ProtectedDashboard;
