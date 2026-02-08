@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { useAdminContext } from "@/context/AdminContext";
+import { logoutAdmin } from "@/lib/auth";
 
 // =====================
 // Icon Components
@@ -229,7 +230,7 @@ export default function AdminSidebar({ onClose }) {
           <Link
             href="/auth/login"
             onClick={() => {
-              localStorage.removeItem("adminToken");
+              logoutAdmin();
               onClose && onClose();
             }}
             className={`
