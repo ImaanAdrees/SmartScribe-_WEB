@@ -13,6 +13,8 @@ function SystemMaintenance() {
   const [uploading, setUploading] = useState(false);
   const [backupTriggering, setBackupTriggering] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [apkToDelete, setApkToDelete] = useState(null);
   const [systemInfo, setSystemInfo] = useState({
     version: "2.4.1",
     lastUpdate: "2024-10-15",
@@ -29,7 +31,7 @@ function SystemMaintenance() {
 
   // Prevent body scroll when modal is open
   useEffect(() => {
-    if (showUploadModal) {
+    if (showUploadModal || showDeleteModal) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -37,7 +39,7 @@ function SystemMaintenance() {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [showUploadModal]);
+  }, [showUploadModal, showDeleteModal]);
 
   // Form states for APK upload
   const [apkFile, setApkFile] = useState(null);
@@ -297,14 +299,17 @@ function SystemMaintenance() {
     }
   };
 
-  const handleDeleteVersion = async (versionId) => {
-    if (!window.confirm("Are you sure you want to delete this APK version? This action cannot be undone.")) {
-      return;
-    }
+  const openDeleteConfirm = (apkId) => {
+    setApkToDelete(apkId);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteVersion = async () => {
+    if (!apkToDelete) return;
 
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await axios.delete(`${API_URL}/api/maintenance/delete-apk/${versionId}`, {
+      const response = await axios.delete(`${API_URL}/api/maintenance/delete-apk/${apkToDelete}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -321,6 +326,9 @@ function SystemMaintenance() {
     } catch (err) {
       setError("Error deleting APK version");
       console.error(err);
+    } finally {
+      setShowDeleteModal(false);
+      setApkToDelete(null);
     }
   };
 
@@ -377,12 +385,7 @@ function SystemMaintenance() {
 
       {/* APK Upload Modal */}
       {showUploadModal && mounted && createPortal(
-        <div 
-          className="fixed inset-0 z-[99999] flex items-center justify-center p-4"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowUploadModal(false);
-          }}
-        >
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
           {/* Glassmorphism Backdrop */}
           <div className="absolute inset-0 bg-black/40 backdrop-blur-xl animate-fadeIn" />
 
@@ -842,7 +845,7 @@ function SystemMaintenance() {
                         {update.type}
                       </span>
                       <button
-                        onClick={() => handleDeleteVersion(update.id)}
+                        onClick={() => openDeleteConfirm(update.id)}
                         className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                         title="Delete Version"
                       >
@@ -915,6 +918,38 @@ function SystemMaintenance() {
           )}
         </div>
 
+      {/* Delete Confirmation Modal */}
+      {mounted && showDeleteModal && createPortal(
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+          <div className="relative bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl animate-fade-in text-center border border-gray-100">
+            <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 text-red-600">
+              <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">Delete APK Version?</h3>
+            <p className="text-gray-600 mb-8 leading-relaxed">
+              Are you sure you want to delete this version? This action will permanently remove the file from the server and cannot be undone.
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="flex-1 px-6 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-2xl font-bold transition-all active:scale-95"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteVersion}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white px-6 py-4 rounded-2xl font-bold transition-all shadow-[0_10px_20px_rgba(220,38,38,0.2)] hover:shadow-[0_15px_25px_rgba(220,38,38,0.3)] active:scale-95"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }

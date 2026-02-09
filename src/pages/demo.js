@@ -3,6 +3,7 @@ import axios from "axios";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Modal from "@/components/Modal";
+import { io } from "socket.io-client";
 
 export default function Demo() {
   const [open, setOpen] = useState(false);
