@@ -1,6 +1,6 @@
 import AdminLayout from "@/components/AdminLayout";
 import { useState } from "react";
-import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
+import { requireAdmin } from "@/lib/serverAuth";
 
 function SystemAnalytics() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -155,16 +155,10 @@ function SystemAnalytics() {
   );
 }
 
-function ProtectedSystemAnalytics() {
-  return (
-    <ProtectedAdminRoute>
-      <SystemAnalytics />
-    </ProtectedAdminRoute>
-  );
-}
-
-ProtectedSystemAnalytics.getLayout = function getLayout(page) {
+SystemAnalytics.getLayout = function getLayout(page) {
   return <AdminLayout>{page}</AdminLayout>;
 };
 
-export default ProtectedSystemAnalytics;
+export default SystemAnalytics;
+
+export const getServerSideProps = requireAdmin;

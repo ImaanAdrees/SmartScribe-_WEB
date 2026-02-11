@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { useAdminContext } from "@/context/AdminContext";
+import { removeAdminToken } from "@/lib/auth";
 
 export default function AdminNavbar({ onMenuToggle }) {
   const router = useRouter();
@@ -116,7 +117,7 @@ export default function AdminNavbar({ onMenuToggle }) {
                     href="/auth/login"
                     onClick={() => {
                       setShowProfileMenu(false);
-                      localStorage.removeItem("adminToken");
+                      removeAdminToken();
                     }}
                     className="flex items-center gap-3 px-4 py-2  text-sm text-red-600 hover:bg-red-50 transition-colors"
                   >

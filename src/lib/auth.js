@@ -2,6 +2,35 @@ import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
+const setClientCookie = (name, value, options = {}) => {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  const secure = options.secure === true;
+  const encodedValue = encodeURIComponent(value);
+  let cookie = `${name}=${encodedValue}; path=/; SameSite=Lax`;
+
+  if (options.expires instanceof Date && !Number.isNaN(options.expires.getTime())) {
+    cookie += `; expires=${options.expires.toUTCString()}`;
+  }
+
+  if (typeof options.maxAge === "number") {
+    cookie += `; max-age=${options.maxAge}`;
+  }
+
+  if (secure) {
+    cookie += "; Secure";
+  }
+
+  document.cookie = cookie;
+};
+
+const deleteClientCookie = (name) => {
+  const secure = typeof window !== "undefined" && window.location.protocol === "https:";
+  setClientCookie(name, "", { maxAge: 0, secure });
+};
+
 /**
  * Get admin token from localStorage
  */
@@ -18,6 +47,8 @@ export const getAdminToken = () => {
 export const setAdminToken = (token) => {
   if (typeof window !== "undefined") {
     localStorage.setItem("adminToken", token);
+    const secure = window.location.protocol === "https:";
+    setClientCookie("adminToken", token, { secure });
   }
 };
 
@@ -28,6 +59,8 @@ export const removeAdminToken = () => {
   if (typeof window !== "undefined") {
     localStorage.removeItem("adminToken");
     localStorage.removeItem("adminTokenExpiry");
+    deleteClientCookie("adminToken");
+    deleteClientCookie("adminTokenExpiry");
   }
 };
 
@@ -37,6 +70,16 @@ export const removeAdminToken = () => {
 export const setTokenExpiry = (expiresAt) => {
   if (typeof window !== "undefined") {
     localStorage.setItem("adminTokenExpiry", expiresAt);
+    const expiresDate = new Date(expiresAt);
+    if (!Number.isNaN(expiresDate.getTime())) {
+      const secure = window.location.protocol === "https:";
+      setClientCookie("adminTokenExpiry", expiresAt, { expires: expiresDate, secure });
+
+      const token = getAdminToken();
+      if (token) {
+        setClientCookie("adminToken", token, { expires: expiresDate, secure });
+      }
+    }
   }
 };
 
@@ -94,6 +137,14 @@ export const verifyAdminToken = async () => {
   
   if (!token) {
     return { valid: false, admin: null };
+  }
+
+  setAdminToken(token);
+  if (typeof window !== "undefined") {
+    const expiry = localStorage.getItem("adminTokenExpiry");
+    if (expiry) {
+      setTokenExpiry(expiry);
+    }
   }
 
   // Check if token is expiring soon and refresh if needed

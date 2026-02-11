@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import Link from "next/link";
-import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 import axios from "axios";
 import { getAdminToken } from "@/lib/auth";
 
@@ -191,11 +190,7 @@ function AdminDashboard() {
 }
 
 function ProtectedDashboard() {
-  return (
-    <ProtectedAdminRoute>
-      <AdminDashboard />
-    </ProtectedAdminRoute>
-  );
+  return <AdminDashboard />;
 }
 
 // Persistent layout - prevents sidebar/navbar from re-rendering

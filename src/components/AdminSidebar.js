@@ -76,25 +76,25 @@ export default function AdminSidebar({ onClose }) {
       icon: <DashboardIcon />
     },
     {
-      name: "User Management",
+      name: "Users",
       href: "/admin/users",
       icon: <UserManagementIcon />
     },
     {
-      name: "System Analytics",
+      name: "Analytics",
       href: "/admin/analytics",
       icon: <AnalyticsIcon />
     },
     {
-      name: "Send Notifications",
+      name: "Notifications",
       href: "/admin/notifications",
       icon: <NotificationIcon />
     },
     {
-      name: "System Maintenance",
+      name: "Maintenance",
       href: "/admin/maintenance",
       icon: <MaintenanceIcon />
-    },
+    }
   ];
 
   // =====================
@@ -103,21 +103,15 @@ export default function AdminSidebar({ onClose }) {
   return (
     <>
       {/* ========== MAIN SIDEBAR ========== */}
-      <div
-        className={`
-          ${isCollapsed ? "w-20" : "w-64"}
-          bg-white border-r border-gray-200 min-h-screen flex flex-col
-          transition-all duration-300 z-50
-        `}
-      >
+      <div className={`${isCollapsed ? "w-20" : "w-64"} bg-white border-r border-gray-200 min-h-screen flex flex-col transition-all duration-300 z-50`}>
         {/* ========== HEADER SECTION ========== */}
         <div className="p-6 border-b border-gray-200 flex items-center gap-3">
-          <Image 
-            src="/mainlogo.png" 
-            width={40} 
-            height={40} 
-            alt="SmartScribe Logo" 
-            className="rounded-lg" 
+          <Image
+            src="/mainlogo.png"
+            width={40}
+            height={40}
+            alt="SmartScribe Logo"
+            className="rounded-lg"
           />
           {!isCollapsed && (
             <div className="flex-1">
@@ -144,8 +138,7 @@ export default function AdminSidebar({ onClose }) {
           <div className="px-4 py-3 flex justify-end border-b border-gray-200">
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="w-10 h-10 bg-indigo-600 rounded-full 
-                flex items-center justify-center text-white hover:bg-indigo-700 transition-colors shadow-md hover:shadow-lg"
+              className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white hover:bg-indigo-700 transition-colors shadow-md hover:shadow-lg"
               title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
               aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
             >
@@ -171,15 +164,7 @@ export default function AdminSidebar({ onClose }) {
                   <Link
                     href={item.href}
                     onClick={() => onClose && onClose()}
-                    className={`
-                      flex items-center gap-3 px-4 py-3 rounded-xl 
-                      transition-all duration-200 
-                      ${isActive
-                        ? "bg-indigo-50 text-indigo-600 font-semibold"
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                      } 
-                      ${isCollapsed ? "justify-center" : ""}
-                    `}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive ? "bg-indigo-50 text-indigo-600 font-semibold" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"} ${isCollapsed ? "justify-center" : ""}`}
                     title={isCollapsed ? item.name : ""}
                   >
                     <span className={isActive ? "text-indigo-600" : ""}>{item.icon}</span>
@@ -197,11 +182,7 @@ export default function AdminSidebar({ onClose }) {
           <Link
             href="/admin/profile"
             onClick={() => onClose && onClose()}
-            className={`
-              flex items-center gap-3 p-3 rounded-xl 
-              hover:bg-gray-50 transition-colors cursor-pointer
-              ${isCollapsed ? "justify-center" : ""}
-            `}
+            className={`flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer ${isCollapsed ? "justify-center" : ""}`}
           >
             {adminProfile.image ? (
               <Image
@@ -233,12 +214,7 @@ export default function AdminSidebar({ onClose }) {
               logoutAdmin();
               onClose && onClose();
             }}
-            className={`
-              mt-2 flex items-center gap-2 px-4 py-2 text-sm 
-              text-gray-600 hover:text-red-600 hover:bg-red-50 
-              rounded-lg transition-colors
-              ${isCollapsed ? "justify-center" : ""}
-            `}
+            className={`mt-2 flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors ${isCollapsed ? "justify-center" : ""}`}
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

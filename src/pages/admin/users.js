@@ -1,9 +1,10 @@
 import AdminLayout from "@/components/AdminLayout";
 import { useEffect, useState } from "react";
-import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { getAdminToken } from "@/lib/auth";
+import { requireAdmin } from "@/lib/serverAuth";
+import { io } from "socket.io-client";
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
@@ -17,32 +18,46 @@ function UserManagement() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
+  const loadUsers = async () => {
+    const token = getAdminToken();
+    if (!token) {
+      setError("Admin token missing. Please login again.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const { data } = await axios.get(`${API_URL}/api/users`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setUsers(Array.isArray(data?.users) ? data.users : []);
+    } catch (err) {
+      const message = err?.response?.data?.message || "Failed to load users";
+      setError(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadUsers = async () => {
-      const token = getAdminToken();
-      if (!token) {
-        setError("Admin token missing. Please login again.");
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const { data } = await axios.get(`${API_URL}/api/users`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setUsers(Array.isArray(data?.users) ? data.users : []);
-      } catch (err) {
-        const message = err?.response?.data?.message || "Failed to load users";
-        setError(message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     loadUsers();
+  }, []);
+
+  // Real-time updates via Socket.IO
+  useEffect(() => {
+    const socket = io(API_URL);
+
+    socket.on("user_list_updated", () => {
+      console.log("User list updated, refreshing...");
+      loadUsers();
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   const handleDelete = async (user) => {
@@ -308,16 +323,10 @@ function UserManagement() {
   );
 }
 
-function ProtectedUserManagement() {
-  return (
-    <ProtectedAdminRoute>
-      <UserManagement />
-    </ProtectedAdminRoute>
-  );
-}
-
-ProtectedUserManagement.getLayout = function getLayout(page) {
+UserManagement.getLayout = function getLayout(page) {
   return <AdminLayout>{page}</AdminLayout>;
 };
 
-export default ProtectedUserManagement;
+export default UserManagement;
+
+export const getServerSideProps = requireAdmin;

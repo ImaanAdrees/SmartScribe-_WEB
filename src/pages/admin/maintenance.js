@@ -1,8 +1,8 @@
 import AdminLayout from "@/components/AdminLayout";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 import axios from "axios";
+import { requireAdmin } from "@/lib/serverAuth";
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
@@ -954,16 +954,10 @@ function SystemMaintenance() {
   );
 }
 
-function ProtectedSystemMaintenance() {
-  return (
-    <ProtectedAdminRoute>
-      <SystemMaintenance />
-    </ProtectedAdminRoute>
-  );
-}
-
-ProtectedSystemMaintenance.getLayout = function getLayout(page) {
+SystemMaintenance.getLayout = function getLayout(page) {
   return <AdminLayout>{page}</AdminLayout>;
 };
 
-export default ProtectedSystemMaintenance;
+export default SystemMaintenance;
+
+export const getServerSideProps = requireAdmin;

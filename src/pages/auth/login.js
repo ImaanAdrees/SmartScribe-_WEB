@@ -4,6 +4,7 @@ import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import { setAdminToken, setTokenExpiry } from "@/lib/auth";
 
 
 export default function AdminLogin() {
@@ -58,9 +59,9 @@ const handleSubmit = async (e) => {
     );
 
     // Save admin token and expiry time
-    localStorage.setItem("adminToken", data.token);
+    setAdminToken(data.token);
     if (data.expiresAt) {
-      localStorage.setItem("adminTokenExpiry", data.expiresAt);
+      setTokenExpiry(data.expiresAt);
     }
 
     // Redirect to dashboard

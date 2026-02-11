@@ -3,8 +3,9 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
-import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 import AdminLayout from "@/components/AdminLayout";
+import { removeAdminToken } from "@/lib/auth";
+import { requireAdmin } from "@/lib/serverAuth";
 import Image from "next/image";
 import { useAdminContext } from "@/context/AdminContext";
 
@@ -198,11 +199,11 @@ function AdminProfile() {
         }
       );
 
-      localStorage.removeItem("adminToken");
+      removeAdminToken();
       router.push("/auth/login");
     } catch (error) {
       console.error("Logout failed:", error.message);
-      localStorage.removeItem("adminToken");
+      removeAdminToken();
       router.push("/auth/login");
     }
   };
@@ -465,16 +466,10 @@ function AdminProfile() {
   );
 }
 
-function ProtectedAdminProfile() {
-  return (
-    <ProtectedAdminRoute>
-      <AdminProfile />
-    </ProtectedAdminRoute>
-  );
-}
-
-ProtectedAdminProfile.getLayout = function getLayout(page) {
+AdminProfile.getLayout = function getLayout(page) {
   return <AdminLayout>{page}</AdminLayout>;
 };
 
-export default ProtectedAdminProfile;
+export default AdminProfile;
+
+export const getServerSideProps = requireAdmin;

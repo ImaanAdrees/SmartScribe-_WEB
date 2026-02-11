@@ -10,8 +10,11 @@ export default function ProtectedAdminRoute({ children }) {
   const router = useRouter();
   const [isVerifying, setIsVerifying] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+    
     const checkAuth = async () => {
       try {
         const { valid } = await verifyAdminToken();
@@ -20,7 +23,9 @@ export default function ProtectedAdminRoute({ children }) {
           setIsAuthorized(true);
         } else {
           // Not authorized, redirect to login
-          router.replace("/auth/login");
+          // Ensure we don't flash content by confirming isAuthorized is false (it should be default)
+          // setIsAuthorized(false); 
+          await router.replace("/auth/login");
         }
       } catch (error) {
         console.error("Auth verification error:", error);
@@ -32,6 +37,11 @@ export default function ProtectedAdminRoute({ children }) {
 
     checkAuth();
   }, [router]);
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return null;
+  }
 
   // Show loading state while verifying
   if (isVerifying) {

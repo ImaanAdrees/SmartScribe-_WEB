@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Modal } from "@/components/ui/modal";
 import { Bell, Plus, Trash2 } from "lucide-react";
-import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 import AdminLayout from "@/components/AdminLayout";
+import { requireAdmin } from "@/lib/serverAuth";
 
 const AdminNotification = () => {
   const [notifications, setNotifications] = useState([
@@ -77,16 +77,10 @@ const AdminNotification = () => {
   );
 };
 
-function ProtectedAdminNotification() {
-  return (
-    <ProtectedAdminRoute>
-      <AdminNotification />
-    </ProtectedAdminRoute>
-  );
-}
-
-ProtectedAdminNotification.getLayout = function getLayout(page) {
+AdminNotification.getLayout = function getLayout(page) {
   return <AdminLayout>{page}</AdminLayout>;
 };
 
-export default ProtectedAdminNotification;
+export default AdminNotification;
+
+export const getServerSideProps = requireAdmin;

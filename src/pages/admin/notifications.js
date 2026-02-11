@@ -1,9 +1,9 @@
 import AdminLayout from "@/components/AdminLayout";
 import { useEffect, useState } from "react";
-import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { getAdminToken } from "@/lib/auth";
+import { requireAdmin } from "@/lib/serverAuth";
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
@@ -642,16 +642,10 @@ function Notifications() {
   );
 }
 
-function ProtectedNotifications() {
-  return (
-    <ProtectedAdminRoute>
-      <Notifications />
-    </ProtectedAdminRoute>
-  );
-}
-
-ProtectedNotifications.getLayout = function getLayout(page) {
+Notifications.getLayout = function getLayout(page) {
   return <AdminLayout>{page}</AdminLayout>;
 };
 
-export default ProtectedNotifications;
+export default Notifications;
+
+export const getServerSideProps = requireAdmin;
