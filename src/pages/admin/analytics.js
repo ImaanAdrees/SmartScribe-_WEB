@@ -1,20 +1,108 @@
 import AdminLayout from "@/components/AdminLayout";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { requireAdmin } from "@/lib/serverAuth";
+
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
 function SystemAnalytics() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activityLogs, setActivityLogs] = useState([]);
+  const [topUsers, setTopUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [statsData, setStatsData] = useState(null);
 
-  const activityLogs = [
-    { timestamp: "2024-10-27 14:32:15", user: "john@example.com", action: "Transcription Created" },
-    { timestamp: "2024-10-27 14:28:42", user: "jane@example.com", action: "Summary Generated" },
-    { timestamp: "2024-10-27 14:15:03", user: "mike@example.com", action: "Login Attempt" },
-    { timestamp: "2024-10-27 14:10:27", user: "sarah@example.com", action: "Profile Updated" },
-    { timestamp: "2024-10-27 13:58:11", user: "david@example.com", action: "Export PDF" },
-    { timestamp: "2024-10-27 13:45:39", user: "emily@example.com", action: "Transcription Created" },
-    { timestamp: "2024-10-27 13:30:22", user: "chris@example.com", action: "File Upload" },
-    { timestamp: "2024-10-27 13:12:55", user: "lisa@example.com", action: "Summary Generated" }
-  ];
+  useEffect(() => {
+    fetchActivityData();
+  }, [currentPage]);
+
+  const fetchActivityData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const token = localStorage.getItem("adminToken");
+      if (!token) {
+        throw new Error("Admin token not found. Please login as admin.");
+      }
+
+      // Fetch activity logs
+      const logsResponse = await fetch(
+        `${API_URL}/api/activity/logs?limit=8&skip=${(currentPage - 1) * 8}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!logsResponse.ok) {
+        const errorData = await logsResponse.text();
+        console.error("Logs API Error:", errorData);
+        throw new Error(`Failed to fetch activity logs: ${logsResponse.status}`);
+      }
+      const logsData = await logsResponse.json();
+      
+      // Format the activity logs data
+      const formattedLogs = logsData.activities.map((log) => ({
+        timestamp: new Date(log.timestamp).toLocaleString(),
+        user: log.user,
+        action: log.action,
+      }));
+      
+      setActivityLogs(formattedLogs);
+      setTotalPages(logsData.pages);
+
+      // Fetch top active users
+      const usersResponse = await fetch(`${API_URL}/api/activity/top-users?limit=5&daysBack=30`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!usersResponse.ok) {
+        const errorData = await usersResponse.text();
+        console.error("Top Users API Error:", errorData);
+        throw new Error("Failed to fetch top users");
+      }
+      const usersData = await usersResponse.json();
+      setTopUsers(usersData.topUsers);
+
+      // Fetch statistics
+      const statsResponse = await fetch(`${API_URL}/api/activity/summary?daysBack=30`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!statsResponse.ok) {
+        const errorData = await statsResponse.text();
+        console.error("Stats API Error:", errorData);
+        throw new Error("Failed to fetch statistics");
+      }
+      const statsInfo = await statsResponse.json();
+      setStatsData(statsInfo.summary);
+
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching activity data:", err);
+      setError(err.message || "Failed to load activity data. Make sure the backend is running.");
+      setLoading(false);
+    }
+  };
+
+  if (error) {
+    return (
+      <div className="px-4 sm:px-8 py-6">
+        <div className="text-red-600 text-center">Error: {error}</div>
+      </div>
+    );
+  }
 
   return (
       <div className="px-4 sm:px-8 py-6 space-y-8">
@@ -42,23 +130,27 @@ function SystemAnalytics() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             <div className="bg-white rounded-2xl p-4 sm:p-6 border border-gray-200">
               <p className="text-gray-600 text-sm font-medium mb-1">Total Transcriptions</p>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900">5,678</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900">
+                {statsData?.activityBreakdown?.find(s => s._id === "Transcription Created")?.count || 0}
+              </p>
               <p className="text-xs sm:text-sm text-gray-500 mt-2">Last 30 days</p>
             </div>
             <div className="bg-white rounded-2xl p-4 sm:p-6 border border-gray-200">
               <p className="text-gray-600 text-sm font-medium mb-1">Summaries Generated</p>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900">3,456</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900">
+                {statsData?.activityBreakdown?.find(s => s._id === "Summary Generated")?.count || 0}
+              </p>
               <p className="text-xs sm:text-sm text-gray-500 mt-2">Last 30 days</p>
             </div>
             <div className="bg-white rounded-2xl p-4 sm:p-6 border border-gray-200">
-              <p className="text-gray-600 text-sm font-medium mb-1">Avg. Processing Time</p>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900">2.4s</p>
-              <p className="text-xs sm:text-sm text-gray-500 mt-2">Per transcription</p>
+              <p className="text-gray-600 text-sm font-medium mb-1">Active Users</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{statsData?.uniqueUsers || 0}</p>
+              <p className="text-xs sm:text-sm text-gray-500 mt-2">Last 30 days</p>
             </div>
             <div className="bg-white rounded-2xl p-4 sm:p-6 border border-gray-200">
-              <p className="text-gray-600 text-sm font-medium mb-1">Success Rate</p>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900">99.2%</p>
-              <p className="text-xs sm:text-sm text-gray-500 mt-2">System uptime</p>
+              <p className="text-gray-600 text-sm font-medium mb-1">Total Activities</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{statsData?.totalActivities || 0}</p>
+              <p className="text-xs sm:text-sm text-gray-500 mt-2">Last 30 days</p>
             </div>
           </div>
 
@@ -87,26 +179,24 @@ function SystemAnalytics() {
           <div className="bg-white rounded-2xl border border-gray-200 p-4 sm:p-6">
             <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Top Active Users</h2>
             <div className="space-y-3 sm:space-y-4">
-              {[
-                { name: "Jane Smith", transcriptions: 89, avatar: "J" },
-                { name: "David Brown", transcriptions: 71, avatar: "D" },
-                { name: "Chris Wilson", transcriptions: 54, avatar: "C" },
-                { name: "John Doe", transcriptions: 45, avatar: "J" },
-                { name: "Mike Johnson", transcriptions: 32, avatar: "M" }
-              ].map((user, idx) => (
-                <div key={idx} className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-full flex items-center justify-center text-white font-bold">
-                      {user.avatar}
+              {topUsers.length > 0 ? (
+                topUsers.map((user, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-full flex items-center justify-center text-white font-bold">
+                        {user.email?.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-900 text-sm sm:text-base">{user.name}</p>
+                        <p className="text-xs sm:text-sm text-gray-500">{user.transcriptions} activities</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-semibold text-gray-900 text-sm sm:text-base">{user.name}</p>
-                      <p className="text-xs sm:text-sm text-gray-500">{user.transcriptions} transcriptions</p>
-                    </div>
+                    <span className="text-indigo-600 font-bold">#{user.rank}</span>
                   </div>
-                  <span className="text-indigo-600 font-bold">#{idx + 1}</span>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-gray-500 text-sm">No user activity data available</p>
+              )}
             </div>
           </div>
 
@@ -129,22 +219,44 @@ function SystemAnalytics() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {activityLogs.map((log, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 sm:px-6 py-2 text-sm sm:text-base text-gray-600 font-mono">{log.timestamp}</td>
-                    <td className="px-4 sm:px-6 py-2 text-sm sm:text-base text-gray-900 font-medium">{log.user}</td>
-                    <td className="px-4 sm:px-6 py-2 text-sm sm:text-base text-gray-600">{log.action}</td>
+                {loading ? (
+                  <tr>
+                    <td colSpan="3" className="px-4 sm:px-6 py-4 text-center text-gray-500">
+                      Loading...
+                    </td>
                   </tr>
-                ))}
+                ) : activityLogs.length > 0 ? (
+                  activityLogs.map((log, idx) => (
+                    <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-4 sm:px-6 py-2 text-sm sm:text-base text-gray-600 font-mono">{log.timestamp}</td>
+                      <td className="px-4 sm:px-6 py-2 text-sm sm:text-base text-gray-900 font-medium">{log.user}</td>
+                      <td className="px-4 sm:px-6 py-2 text-sm sm:text-base text-gray-600">{log.action}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="px-4 sm:px-6 py-4 text-center text-gray-500">
+                      No activity logs found
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
             <div className="px-4 sm:px-6 py-3 border-t border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <p className="text-sm sm:text-base text-gray-600">Showing 1-8 of 234 logs</p>
+              <p className="text-sm sm:text-base text-gray-600">Showing 1-{activityLogs.length} of {totalPages * 8} logs</p>
               <div className="flex gap-2">
-                <button className="px-3 sm:px-4 py-2 border border-gray-200 rounded-lg text-sm sm:text-base font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
+                <button
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 sm:px-4 py-2 border border-gray-200 rounded-lg text-sm sm:text-base font-semibold text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
                   Previous
                 </button>
-                <button className="px-3 sm:px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm sm:text-base font-semibold hover:bg-indigo-700 transition-colors">
+                <button
+                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 sm:px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm sm:text-base font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                >
                   Next
                 </button>
               </div>
