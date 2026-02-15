@@ -11,7 +11,10 @@ const setClientCookie = (name, value, options = {}) => {
   const encodedValue = encodeURIComponent(value);
   let cookie = `${name}=${encodedValue}; path=/; SameSite=Lax`;
 
-  if (options.expires instanceof Date && !Number.isNaN(options.expires.getTime())) {
+  if (
+    options.expires instanceof Date &&
+    !Number.isNaN(options.expires.getTime())
+  ) {
     cookie += `; expires=${options.expires.toUTCString()}`;
   }
 
@@ -27,7 +30,8 @@ const setClientCookie = (name, value, options = {}) => {
 };
 
 const deleteClientCookie = (name) => {
-  const secure = typeof window !== "undefined" && window.location.protocol === "https:";
+  const secure =
+    typeof window !== "undefined" && window.location.protocol === "https:";
   setClientCookie(name, "", { maxAge: 0, secure });
 };
 
@@ -73,7 +77,10 @@ export const setTokenExpiry = (expiresAt) => {
     const expiresDate = new Date(expiresAt);
     if (!Number.isNaN(expiresDate.getTime())) {
       const secure = window.location.protocol === "https:";
-      setClientCookie("adminTokenExpiry", expiresAt, { expires: expiresDate, secure });
+      setClientCookie("adminTokenExpiry", expiresAt, {
+        expires: expiresDate,
+        secure,
+      });
 
       const token = getAdminToken();
       if (token) {
@@ -90,7 +97,7 @@ export const isTokenExpiringSoon = () => {
   if (typeof window !== "undefined") {
     const expiryTime = localStorage.getItem("adminTokenExpiry");
     if (!expiryTime) return true;
-    
+
     const timeUntilExpiry = new Date(expiryTime) - new Date();
     // Return true if less than 5 minutes until expiry
     return timeUntilExpiry < 5 * 60 * 1000;
@@ -103,7 +110,7 @@ export const isTokenExpiringSoon = () => {
  */
 export const refreshAdminToken = async () => {
   const token = getAdminToken();
-  
+
   if (!token) {
     throw new Error("No token to refresh");
   }
@@ -116,12 +123,12 @@ export const refreshAdminToken = async () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
 
     setAdminToken(data.token);
     setTokenExpiry(data.expiresAt);
-    
+
     return data;
   } catch (error) {
     removeAdminToken();
@@ -134,7 +141,7 @@ export const refreshAdminToken = async () => {
  */
 export const verifyAdminToken = async () => {
   const token = getAdminToken();
-  
+
   if (!token) {
     return { valid: false, admin: null };
   }
@@ -183,7 +190,7 @@ export const verifyAdminToken = async () => {
  */
 export const logoutAdmin = async () => {
   const token = getAdminToken();
-  
+
   if (token) {
     try {
       await axios.post(
@@ -193,15 +200,15 @@ export const logoutAdmin = async () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
     } catch (error) {
       console.error("Logout error:", error);
     }
   }
-  
+
   removeAdminToken();
-  
+
   if (typeof window !== "undefined") {
     window.location.href = "/auth/login";
   }
@@ -219,7 +226,7 @@ export const isAuthenticated = () => {
  */
 export const getAdminProfile = async () => {
   const token = getAdminToken();
-  
+
   if (!token) {
     throw new Error("No token found");
   }

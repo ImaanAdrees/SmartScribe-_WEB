@@ -15,7 +15,7 @@ function AdminProfile() {
   const router = useRouter();
   const { updateAdminProfile } = useAdminContext();
   const [tabActive, setTabActive] = useState("profile"); // profile or password
-  
+
   // Profile state
   const [profile, setProfile] = useState({
     name: "",
@@ -75,7 +75,7 @@ function AdminProfile() {
         const img = new window.Image();
         img.onload = () => {
           // Create canvas and compress
-          const canvas = document.createElement('canvas');
+          const canvas = document.createElement("canvas");
           const maxWidth = 500;
           const maxHeight = 500;
           let width = img.width;
@@ -96,11 +96,11 @@ function AdminProfile() {
 
           canvas.width = width;
           canvas.height = height;
-          const ctx = canvas.getContext('2d');
+          const ctx = canvas.getContext("2d");
           ctx.drawImage(img, 0, 0, width, height);
 
           // Convert to base64 with compression
-          const compressedImage = canvas.toDataURL('image/jpeg', 0.7);
+          const compressedImage = canvas.toDataURL("image/jpeg", 0.7);
           setProfile({ ...profile, image: compressedImage });
         };
         img.src = reader.result;
@@ -124,7 +124,7 @@ function AdminProfile() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (response.data.success) {
@@ -134,14 +134,12 @@ function AdminProfile() {
           email: profile.email,
           image: profile.image,
         });
-        
+
         toast.success("✓ Profile updated successfully!");
         setEditableProfile(false);
       }
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to update profile"
-      );
+      toast.error(error.response?.data?.message || "Failed to update profile");
     } finally {
       setProfileLoading(false);
     }
@@ -164,7 +162,7 @@ function AdminProfile() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (response.data.success) {
@@ -176,9 +174,7 @@ function AdminProfile() {
         });
       }
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to change password"
-      );
+      toast.error(error.response?.data?.message || "Failed to change password");
     } finally {
       setPasswordLoading(false);
     }
@@ -196,7 +192,7 @@ function AdminProfile() {
             Authorization: `Bearer ${token}`,
           },
           withCredentials: true,
-        }
+        },
       );
 
       removeAdminToken();
@@ -214,7 +210,9 @@ function AdminProfile() {
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Admin Profile</h1>
-          <p className="text-gray-600 mt-2">Manage your profile and security settings</p>
+          <p className="text-gray-600 mt-2">
+            Manage your profile and security settings
+          </p>
         </div>
 
         {/* Tab Navigation */}
@@ -244,7 +242,6 @@ function AdminProfile() {
         {/* Profile Tab */}
         {tabActive === "profile" && (
           <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-6">
-
             {/* Profile Image */}
             <div className="text-center mb-8">
               <input
@@ -349,7 +346,6 @@ function AdminProfile() {
         {/* Password Tab */}
         {tabActive === "password" && (
           <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-6">
-
             <form onSubmit={handlePasswordChange} className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-2">
@@ -371,7 +367,10 @@ function AdminProfile() {
                   <button
                     type="button"
                     onClick={() =>
-                      setShowPasswords({ ...showPasswords, old: !showPasswords.old })
+                      setShowPasswords({
+                        ...showPasswords,
+                        old: !showPasswords.old,
+                      })
                     }
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600"
                   >
@@ -400,7 +399,10 @@ function AdminProfile() {
                   <button
                     type="button"
                     onClick={() =>
-                      setShowPasswords({ ...showPasswords, new: !showPasswords.new })
+                      setShowPasswords({
+                        ...showPasswords,
+                        new: !showPasswords.new,
+                      })
                     }
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600"
                   >

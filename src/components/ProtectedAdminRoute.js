@@ -14,17 +14,17 @@ export default function ProtectedAdminRoute({ children }) {
 
   useEffect(() => {
     setMounted(true);
-    
+
     const checkAuth = async () => {
       try {
         const { valid } = await verifyAdminToken();
-        
+
         if (valid) {
           setIsAuthorized(true);
         } else {
           // Not authorized, redirect to login
           // Ensure we don't flash content by confirming isAuthorized is false (it should be default)
-          // setIsAuthorized(false); 
+          // setIsAuthorized(false);
           await router.replace("/auth/login");
         }
       } catch (error) {
@@ -49,7 +49,9 @@ export default function ProtectedAdminRoute({ children }) {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
-          <p className="text-gray-600 font-medium">Verifying authentication...</p>
+          <p className="text-gray-600 font-medium">
+            Verifying authentication...
+          </p>
         </div>
       </div>
     );

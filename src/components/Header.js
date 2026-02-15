@@ -17,7 +17,6 @@ export default function Header() {
   return (
     <header className="sticky top-0 bg-white/95 backdrop-blur-md shadow-sm z-50 border-b border-gray-100">
       <div className="max-w-7xl mx-auto flex items-center justify-between py-4 px-4 lg:px-8">
-
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
           <Image
@@ -32,7 +31,6 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
-
           {/* Links */}
           <nav className="flex gap-4 items-center">
             {navItems.map((item) => {

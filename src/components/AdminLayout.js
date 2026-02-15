@@ -61,12 +61,12 @@ export default function AdminLayout({ children }) {
       <div className="flex min-h-screen bg-gray-50">
         {/* Mobile Overlay */}
         {isMobile && mobileMenuOpen && (
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 z-40"
             onClick={() => setMobileMenuOpen(false)}
           />
         )}
-        
+
         {/* Sidebar - Hidden on mobile, visible on desktop */}
         <div className={sidebarClassName}>
           {/* Sidebar */}
@@ -81,9 +81,7 @@ export default function AdminLayout({ children }) {
           <AdminNavbar onMenuToggle={handleMenuToggle} />
 
           {/* Page Content */}
-          <main className="flex-1 overflow-x-hidden">
-            {children}
-          </main>
+          <main className="flex-1 overflow-x-hidden">{children}</main>
         </div>
       </div>
     </ProtectedAdminRoute>

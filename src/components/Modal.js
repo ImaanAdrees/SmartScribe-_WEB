@@ -13,7 +13,7 @@ export default function Modal({ open, onClose, onConfirm, title, children }) {
         <h2 className="text-xl font-bold mb-2 text-indigo-900">
           {title || "Download SmartScribe"}
         </h2>
-        
+
         {children ? (
           <div className="mb-6">{children}</div>
         ) : (

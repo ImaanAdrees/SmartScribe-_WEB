@@ -11,7 +11,7 @@ export const requireAdmin = async (context) => {
   if (!token) {
     return {
       redirect: {
-        destination: '/auth/login',
+        destination: "/auth/login",
         permanent: false,
       },
     };
