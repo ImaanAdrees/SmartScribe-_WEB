@@ -6,12 +6,11 @@ export default function Footer() {
     <footer className="bg-gray-900 text-white py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-3 gap-8 mb-8">
-
           {/* Brand Section */}
           <div>
             <div className="flex items-center gap-3 mb-4">
               <Image
-                src="/mainlogo.png"        // your logo path
+                src="/mainlogo.png" // your logo path
                 alt="SmartScribe Logo"
                 width={40}
                 height={40}
@@ -30,16 +29,36 @@ export default function Footer() {
             <h3 className="font-bold text-lg mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/" className="text-gray-400 hover:text-white transition-colors">Home</Link>
+                <Link
+                  href="/"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Home
+                </Link>
               </li>
               <li>
-                <Link href="/about" className="text-gray-400 hover:text-white transition-colors">About</Link>
+                <Link
+                  href="/about"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  About
+                </Link>
               </li>
               <li>
-                <Link href="/features" className="text-gray-400 hover:text-white transition-colors">Features</Link>
+                <Link
+                  href="/features"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Features
+                </Link>
               </li>
               <li>
-                <Link href="/demo" className="text-gray-400 hover:text-white transition-colors">Demo</Link>
+                <Link
+                  href="/demo"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Demo
+                </Link>
               </li>
             </ul>
           </div>
@@ -62,8 +81,8 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 pt-8 text-center">
           <p className="text-gray-400 text-sm">
-            © 2025 SmartScribe — Built with passion by 
-            <span className="text-white font-semibold"> Adan Fatima</span>, 
+            © 2025 SmartScribe — Built with passion by
+            <span className="text-white font-semibold"> Adan Fatima</span>,
             <span className="text-white font-semibold"> Imaan Adrees</span> &
             <span className="text-white font-semibold"> Maria Zaman</span>
           </p>

@@ -1,6 +1,7 @@
 import io from "socket.io-client";
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+const SOCKET_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
 let socket = null;
 
@@ -59,7 +60,7 @@ export const joinNotificationRoom = (userId) => {
 export const onNewNotification = (callback) => {
   const socketInstance = getSocket();
   socketInstance.on("new_notification", callback);
-  
+
   // Return unsubscribe function
   return () => {
     socketInstance.off("new_notification", callback);

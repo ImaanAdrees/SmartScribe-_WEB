@@ -8,19 +8,19 @@ export default function About() {
       name: "Adan Fatima",
       role: "Frontend & Product Design",
       bio: "Specializes in creating intuitive user interfaces and seamless user experiences.",
-      initial: "AF"
+      initial: "AF",
     },
     {
       name: "Imaan Adrees",
       role: "Backend & API Integration",
       bio: "Focuses on robust backend architecture and efficient API development.",
-      initial: "IA"
+      initial: "IA",
     },
     {
       name: "Maria Zaman",
       role: "Research & Testing",
       bio: "Ensures quality through comprehensive testing and user research.",
-      initial: "MZ"
+      initial: "MZ",
     },
   ];
 
@@ -36,16 +36,17 @@ export default function About() {
             <div className="absolute w-96 h-96 bg-purple-400 rounded-full blur-3xl animate-blob animation-delay-2000 top-0 right-20"></div>
             <div className="absolute w-96 h-96 bg-indigo-300 rounded-full blur-3xl animate-blob animation-delay-4000 bottom-0 left-40"></div>
           </div>
-          
+
           <div className="max-w-5xl mx-auto text-center relative z-10">
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 animate-fade-in">
               About SmartScribe
             </h1>
             <p className="text-xl text-indigo-100 max-w-3xl mx-auto leading-relaxed animate-fade-in-delay">
-              Transforming the way teams capture and organize meeting information
+              Transforming the way teams capture and organize meeting
+              information
             </p>
           </div>
-          
+
           <style jsx>{`
             @keyframes blob {
               0% {
@@ -99,23 +100,29 @@ export default function About() {
               <div className="absolute w-36 h-36 bg-indigo-400 rounded-full blur-2xl animate-float-fast bottom-10 left-1/3"></div>
               <div className="absolute w-28 h-28 bg-purple-200 rounded-full blur-2xl animate-float-slow bottom-20 right-1/4"></div>
             </div>
-            
+
             <div className="max-w-3xl mx-auto relative z-10">
-              <h2 className="text-4xl font-bold text-gray-900 mb-6 text-center">Our Mission</h2>
+              <h2 className="text-4xl font-bold text-gray-900 mb-6 text-center">
+                Our Mission
+              </h2>
               <p className="text-xl text-gray-700 leading-relaxed mb-6">
-                SmartScribe is an AI-driven note-taking assistant designed to revolutionize how you capture and process meeting information. 
-                We believe that important conversations shouldn't be lost to poor note-taking or memory gaps.
+                SmartScribe is an AI-driven note-taking assistant designed to
+                revolutionize how you capture and process meeting information.
+                We believe that important conversations shouldn't be lost to
+                poor note-taking or memory gaps.
               </p>
               <p className="text-xl text-gray-700 leading-relaxed">
-                Built for students, professionals, and teams, our platform combines cutting-edge AI technology with 
-                an intuitive interface to help you focus on what truly matters—engaging in meaningful discussions 
-                while we handle the documentation.
+                Built for students, professionals, and teams, our platform
+                combines cutting-edge AI technology with an intuitive interface
+                to help you focus on what truly matters—engaging in meaningful
+                discussions while we handle the documentation.
               </p>
             </div>
-            
+
             <style jsx>{`
               @keyframes floatSlow {
-                0%, 100% {
+                0%,
+                100% {
                   transform: translate(0, 0) scale(1);
                 }
                 25% {
@@ -129,7 +136,8 @@ export default function About() {
                 }
               }
               @keyframes floatMedium {
-                0%, 100% {
+                0%,
+                100% {
                   transform: translate(0, 0) scale(1) rotate(0deg);
                 }
                 33% {
@@ -140,7 +148,8 @@ export default function About() {
                 }
               }
               @keyframes floatFast {
-                0%, 100% {
+                0%,
+                100% {
                   transform: translate(0, 0) scale(1);
                 }
                 20% {
@@ -172,39 +181,80 @@ export default function About() {
         {/* Values Section */}
         <section className="bg-indigo-50 py-20 px-4">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">Our Values</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">
+              Our Values
+            </h2>
             <div className="grid md:grid-cols-3 gap-8">
               <div className="bg-white p-8 rounded-2xl border-2 border-indigo-100 shadow-lg">
                 <div className="w-14 h-14 bg-indigo-600 rounded-xl flex items-center justify-center mb-6">
-                  <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  <svg
+                    className="w-7 h-7 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
                   </svg>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Innovation</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  Innovation
+                </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Constantly pushing boundaries with AI technology to deliver smarter, faster solutions.
+                  Constantly pushing boundaries with AI technology to deliver
+                  smarter, faster solutions.
                 </p>
               </div>
               <div className="bg-white p-8 rounded-2xl border-2 border-indigo-100 shadow-lg">
                 <div className="w-14 h-14 bg-indigo-600 rounded-xl flex items-center justify-center mb-6">
-                  <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  <svg
+                    className="w-7 h-7 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
                   </svg>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Privacy</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  Privacy
+                </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Your data is yours. We prioritize security and keep your information encrypted and private.
+                  Your data is yours. We prioritize security and keep your
+                  information encrypted and private.
                 </p>
               </div>
               <div className="bg-white p-8 rounded-2xl border-2 border-indigo-100 shadow-lg">
                 <div className="w-14 h-14 bg-indigo-600 rounded-xl flex items-center justify-center mb-6">
-                  <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                  <svg
+                    className="w-7 h-7 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
+                    />
                   </svg>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Simplicity</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  Simplicity
+                </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Powerful features wrapped in an intuitive design that anyone can use effortlessly.
+                  Powerful features wrapped in an intuitive design that anyone
+                  can use effortlessly.
                 </p>
               </div>
             </div>
@@ -214,15 +264,18 @@ export default function About() {
         {/* Team Section */}
         <section className="max-w-6xl mx-auto px-4 py-20">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Meet Our Team</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Meet Our Team
+            </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Passionate individuals working together to build the future of meeting documentation
+              Passionate individuals working together to build the future of
+              meeting documentation
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {team.map((member, idx) => (
-              <div 
-                key={idx} 
+              <div
+                key={idx}
                 className="bg-white p-8 rounded-2xl border-2 border-gray-100 hover:border-indigo-600 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 text-center"
               >
                 <div className="w-24 h-24 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold shadow-lg">
@@ -234,9 +287,7 @@ export default function About() {
                 <p className="text-indigo-600 font-semibold mb-4">
                   {member.role}
                 </p>
-                <p className="text-gray-600 leading-relaxed">
-                  {member.bio}
-                </p>
+                <p className="text-gray-600 leading-relaxed">{member.bio}</p>
               </div>
             ))}
           </div>
