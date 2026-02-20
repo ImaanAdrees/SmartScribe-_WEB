@@ -121,7 +121,6 @@ export const refreshAdminToken = async () => {
       {},
       {
         headers: {
-          
           Authorization: `Bearer ${token}`,
         },
       },
