@@ -19,6 +19,27 @@ import {
  * @param {function} onFilterChange - Callback for filter change
  */
 const UsageChart = ({ data, filter, onFilterChange }) => {
+  const CustomTooltip = ({ active, payload }) => {
+    if (!active || !payload || !payload.length) return null;
+    const item = payload[0].payload;
+    return (
+      <div className="bg-white p-2 rounded-lg border shadow">
+        <div className="font-semibold mb-1">{item.label}</div>
+        <div className="text-sm">
+          <div className="flex justify-between"><div className="text-gray-600">Transcriptions</div><div className="font-medium">{item.transcriptions}</div></div>
+          <div className="flex justify-between"><div className="text-gray-600">Summaries</div><div className="font-medium">{item.summaries}</div></div>
+          <div className="mt-2 font-semibold">Activities breakdown</div>
+          {(item.actions || []).map((a) => (
+            <div key={a.action} className="flex justify-between text-sm">
+              <div className="text-gray-600">{a.action}</div>
+              <div className="font-medium">{a.count}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div>
       <div className="flex gap-2 flex-wrap mb-4">
@@ -58,7 +79,7 @@ const UsageChart = ({ data, filter, onFilterChange }) => {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="label" />
           <YAxis allowDecimals={false} />
-          <Tooltip />
+          <Tooltip content={<CustomTooltip />} />
           <Legend />
           <Bar dataKey="transcriptions" fill="#6366f1" name="Transcriptions" />
           <Bar dataKey="summaries" fill="#10b981" name="Summaries" />

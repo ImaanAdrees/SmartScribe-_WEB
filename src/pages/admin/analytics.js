@@ -32,20 +32,26 @@ function SystemAnalytics() {
   useEffect(() => {
     // Only set up socket listener once
     if (socketListenerRef.current) return;
-    const socket = initializeSocket();
+    
+    const { initializeSocket, getSocket } = require("@/lib/socket");
+    let socket = getSocket();
+    if (!socket) socket = initializeSocket();
 
     // Listen for analytics update events (event name must match backend emit)
     const handleAnalyticsUpdate = () => {
-      // Optionally debounce or throttle if needed
-      fetchActivityData();
+      console.log("[Analytics] Real-time update received");
+      fetchActivityData(true);
     };
-    socket.on("analytics_update", handleAnalyticsUpdate);
-    socketListenerRef.current = true;
 
-    return () => {
-      socket.off("analytics_update", handleAnalyticsUpdate);
-      socketListenerRef.current = false;
-    };
+    if (socket) {
+      socket.on("analytics_update", handleAnalyticsUpdate);
+      socketListenerRef.current = true;
+
+      return () => {
+        socket.off("analytics_update", handleAnalyticsUpdate);
+        socketListenerRef.current = false;
+      };
+    }
   }, []);
 
   // Helper to generate mock chart data (replace with real API if available)
@@ -106,9 +112,9 @@ function SystemAnalytics() {
     return data;
   }
 
-  const fetchActivityData = async () => {
+  const fetchActivityData = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       setError(null);
 
       const token = localStorage.getItem("adminToken");
@@ -203,6 +209,7 @@ function SystemAnalytics() {
             transcriptions: item.transcriptions || 0,
             summaries: item.summaries || 0,
             activities: item.activities || 0,
+            actions: item.actions || [],
           }));
           setUsageChartData(mapped);
         } else {
