@@ -1,6 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/AdminLayout";
+import dynamic from "next/dynamic";
+
+const DynamicDailyUserBreakdown = dynamic(() => import('@/components/DailyUserBreakdown'), { ssr: false });
+const DynamicTranscriptionGrowth = dynamic(() => import('@/components/TranscriptionGrowth'), { ssr: false });
 import Link from "next/link";
 import axios from "axios";
 import { getAdminToken } from "@/lib/auth";
@@ -18,7 +22,7 @@ function AdminDashboard() {
   });
 
   useEffect(() => {
-    const loadStats = async () => {
+    const loadStats = async (silent = false) => {
       const token = getAdminToken();
       if (!token) {
         setStatsError("Admin token missing. Please login again.");
@@ -26,6 +30,7 @@ function AdminDashboard() {
         return;
       }
 
+      if (!silent) setStatsLoading(true);
       try {
         const { data } = await axios.get(`${API_URL}/api/users`, {
           headers: {
@@ -56,6 +61,19 @@ function AdminDashboard() {
     };
 
     loadStats();
+
+    // Set up real-time listener
+    const { getSocket, initializeSocket } = require("@/lib/socket");
+    let socket = getSocket();
+    if (!socket) socket = initializeSocket();
+
+    if (socket) {
+      const handleUpdate = () => loadStats(true);
+      socket.on("analytics_update", handleUpdate);
+      return () => {
+        socket.off("analytics_update", handleUpdate);
+      };
+    }
   }, []);
 
   const stats = [
@@ -212,9 +230,11 @@ function AdminDashboard() {
           {/* Graph Card 1 */}
           <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
             <h3 className="text-md font-semibold text-gray-800 mb-4">
-              Daily Users
+             Daily Users
             </h3>
-            <div className="h-56 w-full bg-gray-200 rounded-lg animate-pulse"></div>
+            <div>
+              <DynamicDailyUserBreakdown />
+            </div>
           </div>
 
           {/* Graph Card 2 */}
@@ -222,7 +242,9 @@ function AdminDashboard() {
             <h3 className="text-md font-semibold text-gray-800 mb-4">
               Transcriptions Growth
             </h3>
-            <div className="h-56 w-full bg-gray-200 rounded-lg animate-pulse"></div>
+            <div>
+              <DynamicTranscriptionGrowth daysBack={7} />
+            </div>
           </div>
         </div>
       </div>
