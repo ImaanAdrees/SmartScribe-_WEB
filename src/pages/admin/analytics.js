@@ -20,13 +20,14 @@ function SystemAnalytics() {
   const [statsData, setStatsData] = useState(null);
   const [usageChartData, setUsageChartData] = useState([]);
   const [usageFilter, setUsageFilter] = useState("daily"); // "daily", "weekly", "monthly"
+  const [daysBack, setDaysBack] = useState(30);
 
   // Ref to prevent multiple socket listeners
   const socketListenerRef = useRef(false);
 
   useEffect(() => {
     fetchActivityData();
-  }, [currentPage, usageFilter]);
+  }, [currentPage, usageFilter, daysBack]);
 
   // Real-time updates via socket.io
   useEffect(() => {
@@ -154,7 +155,7 @@ function SystemAnalytics() {
 
       // Fetch top active users
       const usersResponse = await fetch(
-        `${API_URL}/api/activity/top-users?limit=5&daysBack=30`,
+        `${API_URL}/api/activity/top-users?limit=5&daysBack=${daysBack}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -173,7 +174,7 @@ function SystemAnalytics() {
 
       // Fetch statistics
       const statsResponse = await fetch(
-        `${API_URL}/api/activity/summary?daysBack=30`,
+        `${API_URL}/api/activity/summary?daysBack=${daysBack}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -193,7 +194,7 @@ function SystemAnalytics() {
       // Fetch real usage bucketed data for chart
       try {
         const usageResp = await fetch(
-          `${API_URL}/api/activity/usage?filter=${usageFilter}&daysBack=30`,
+          `${API_URL}/api/activity/usage?filter=${usageFilter}&daysBack=${daysBack}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -254,11 +255,15 @@ function SystemAnalytics() {
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 gap-2">
-          <select className="px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 outline-none font-semibold text-gray-700 text-sm sm:text-base">
-            <option>Last 7 Days</option>
-            <option>Last 30 Days</option>
-            <option>Last 90 Days</option>
-            <option>All Time</option>
+          <select 
+            value={daysBack}
+            onChange={(e) => setDaysBack(parseInt(e.target.value))}
+            className="px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 outline-none font-semibold text-gray-700 text-sm sm:text-base"
+          >
+            <option value={7}>Last 7 Days</option>
+            <option value={30}>Last 30 Days</option>
+            <option value={90}>Last 90 Days</option>
+            <option value={365}>Last Year</option>
           </select>
           <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 sm:px-6 py-2 rounded-xl font-semibold flex items-center gap-2 transition-all text-sm sm:text-base">
             Export Report
@@ -277,7 +282,7 @@ function SystemAnalytics() {
               (s) => s._id === "Transcription Created",
             )?.count || 0}
           </p>
-          <p className="text-xs sm:text-sm text-gray-500 mt-2">Last 30 days</p>
+          <p className="text-xs sm:text-sm text-gray-500 mt-2">Last {daysBack} days</p>
         </div>
         <div className="bg-white rounded-2xl p-4 sm:p-6 border border-gray-200">
           <p className="text-gray-600 text-sm font-medium mb-1">
@@ -288,14 +293,14 @@ function SystemAnalytics() {
               (s) => s._id === "Summary Generated",
             )?.count || 0}
           </p>
-          <p className="text-xs sm:text-sm text-gray-500 mt-2">Last 30 days</p>
+          <p className="text-xs sm:text-sm text-gray-500 mt-2">Last {daysBack} days</p>
         </div>
         <div className="bg-white rounded-2xl p-4 sm:p-6 border border-gray-200">
           <p className="text-gray-600 text-sm font-medium mb-1">Active Users</p>
           <p className="text-2xl sm:text-3xl font-bold text-gray-900">
             {statsData?.uniqueUsers || 0}
           </p>
-          <p className="text-xs sm:text-sm text-gray-500 mt-2">Last 30 days</p>
+          <p className="text-xs sm:text-sm text-gray-500 mt-2">Last {daysBack} days</p>
         </div>
         <div className="bg-white rounded-2xl p-4 sm:p-6 border border-gray-200">
           <p className="text-gray-600 text-sm font-medium mb-1">
@@ -304,7 +309,7 @@ function SystemAnalytics() {
           <p className="text-2xl sm:text-3xl font-bold text-gray-900">
             {statsData?.totalActivities || 0}
           </p>
-          <p className="text-xs sm:text-sm text-gray-500 mt-2">Last 30 days</p>
+          <p className="text-xs sm:text-sm text-gray-500 mt-2">Last {daysBack} days</p>
         </div>
       </div>
 
