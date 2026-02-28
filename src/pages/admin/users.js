@@ -297,6 +297,9 @@ function UserManagement() {
                       Transcriptions
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Password (Hash)
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -369,6 +372,11 @@ function UserManagement() {
                         <td className="px-6 py-4">
                           <span className="text-sm font-semibold text-gray-900">
                             {user.transcriptions}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                            {user.password}
                           </span>
                         </td>
                         <td className="px-6 py-4">
