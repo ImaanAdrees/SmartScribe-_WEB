@@ -32,19 +32,23 @@ function AdminDashboard() {
 
       if (!silent) setStatsLoading(true);
       try {
-        const { data } = await axios.get(`${API_URL}/api/users`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const headers = {
+          Authorization: `Bearer ${token}`,
+        };
 
-        const users = Array.isArray(data?.users) ? data.users : [];
-        const totalTranscriptions = users.reduce(
-          (sum, user) =>
-            sum +
-            (Number.isFinite(user.transcriptions) ? user.transcriptions : 0),
-          0,
-        );
+        const [{ data: usersData }, { data: transcriptionLogsData }] =
+          await Promise.all([
+            axios.get(`${API_URL}/api/users`, { headers }),
+            axios.get(
+              `${API_URL}/api/activity/logs?action=Transcription%20Created&limit=1&skip=0`,
+              { headers },
+            ),
+          ]);
+
+        const users = Array.isArray(usersData?.users) ? usersData.users : [];
+        const totalTranscriptions = Number.isFinite(transcriptionLogsData?.total)
+          ? transcriptionLogsData.total
+          : 0;
 
         setStatsData({
           totalUsers: users.length,

@@ -111,7 +111,7 @@ function UserManagement() {
 
   return (
     <>
-      <div className="p-8">
+      <div className="w-full min-w-0 max-w-full p-8 overflow-x-hidden">
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
@@ -119,7 +119,7 @@ function UserManagement() {
         </div>
 
         {/* Main Content */}
-        <div className="p-8">
+        <div className="w-full min-w-0 max-w-full p-8 overflow-x-hidden">
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div className="bg-white rounded-2xl p-6 border border-gray-200">
@@ -274,14 +274,14 @@ function UserManagement() {
           </div>
 
           {/* Users Table */}
-          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+          <div className="w-full min-w-0 max-w-full bg-white rounded-2xl border border-gray-200 overflow-hidden">
             {deleteError ? (
               <div className="px-6 py-4 text-sm text-red-600 border-b border-gray-200">
                 {deleteError}
               </div>
             ) : null}
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div className="w-full max-w-full overflow-x-auto pb-2">
+              <table className="w-full" style={{ minWidth: "1500px" }}>
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -297,6 +297,18 @@ function UserManagement() {
                       Transcriptions
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Organization
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Country
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Phone
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      City
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Password (Hash)
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -309,7 +321,7 @@ function UserManagement() {
                     <tr>
                       <td
                         className="px-6 py-6 text-sm text-gray-600"
-                        colSpan={5}
+                        colSpan={10}
                       >
                         Loading users...
                       </td>
@@ -318,7 +330,7 @@ function UserManagement() {
                     <tr>
                       <td
                         className="px-6 py-6 text-sm text-red-600"
-                        colSpan={5}
+                        colSpan={10}
                       >
                         {error}
                       </td>
@@ -327,7 +339,7 @@ function UserManagement() {
                     <tr>
                       <td
                         className="px-6 py-6 text-sm text-gray-600"
-                        colSpan={5}
+                        colSpan={10}
                       >
                         No users found.
                       </td>
@@ -373,6 +385,18 @@ function UserManagement() {
                           <span className="text-sm font-semibold text-gray-900">
                             {user.transcriptions}
                           </span>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600">
+                          {user.organization || "-"}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600">
+                          {user.country || "-"}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600">
+                          {user.phone || "-"}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600">
+                          {user.city || "-"}
                         </td>
                         <td className="px-6 py-4">
                           <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded">
