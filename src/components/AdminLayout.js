@@ -58,7 +58,7 @@ export default function AdminLayout({ children }) {
 
   return (
     <ProtectedAdminRoute>
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="flex min-h-screen w-full max-w-full overflow-x-hidden bg-gray-50">
         {/* Mobile Overlay */}
         {isMobile && mobileMenuOpen && (
           <div
@@ -76,12 +76,12 @@ export default function AdminLayout({ children }) {
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-h-screen w-full lg:w-auto">
+        <div className="flex-1 flex min-w-0 max-w-full flex-col min-h-screen w-full lg:w-auto overflow-x-hidden">
           {/* Navbar */}
           <AdminNavbar onMenuToggle={handleMenuToggle} />
 
           {/* Page Content */}
-          <main className="flex-1 overflow-x-hidden">{children}</main>
+          <main className="flex-1 min-w-0 max-w-full overflow-x-hidden">{children}</main>
         </div>
       </div>
     </ProtectedAdminRoute>
