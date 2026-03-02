@@ -17,6 +17,9 @@ function UserManagement() {
   const [deleteError, setDeleteError] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [isToggleModalOpen, setIsToggleModalOpen] = useState(false);
+  const [userToToggle, setUserToToggle] = useState(null);
+  const [toggleError, setToggleError] = useState("");
 
   const loadUsers = async () => {
     const token = getAdminToken();
@@ -99,6 +102,67 @@ function UserManagement() {
     if (!userToDelete) return;
     await handleDelete(userToDelete);
     closeDeleteModal();
+  };
+
+  const openToggleModal = (user) => {
+    setToggleError("");
+    setUserToToggle(user);
+    setIsToggleModalOpen(true);
+  };
+
+  const closeToggleModal = () => {
+    setIsToggleModalOpen(false);
+    setUserToToggle(null);
+  };
+
+  const handleToggleDisabled = async (user) => {
+    const token = getAdminToken();
+    if (!token) {
+      setToggleError("Admin token missing. Please login again.");
+      return;
+    }
+
+    setToggleError("");
+
+    try {
+      const nextDisabledStatus = !user.isDisabled;
+
+      await axios.patch(
+        `${API_URL}/api/users/${user.id}/disable`,
+        { isDisabled: nextDisabledStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      setUsers((prev) =>
+        prev.map((entry) =>
+          entry.id === user.id
+            ? {
+                ...entry,
+                isDisabled: nextDisabledStatus,
+              }
+            : entry,
+        ),
+      );
+
+      toast.success(
+        nextDisabledStatus
+          ? `${user.name} has been disabled.`
+          : `${user.name} has been enabled.`,
+      );
+    } catch (err) {
+      const message = err?.response?.data?.message || "Failed to update user status";
+      setToggleError(message);
+    }
+  };
+
+  const confirmToggleDisabled = async () => {
+    if (!userToToggle) return;
+    await handleToggleDisabled(userToToggle);
+    closeToggleModal();
   };
 
   const filteredUsers = users.filter((user) => {
@@ -312,6 +376,9 @@ function UserManagement() {
                       Password (Hash)
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -321,7 +388,7 @@ function UserManagement() {
                     <tr>
                       <td
                         className="px-6 py-6 text-sm text-gray-600"
-                        colSpan={10}
+                        colSpan={11}
                       >
                         Loading users...
                       </td>
@@ -330,7 +397,7 @@ function UserManagement() {
                     <tr>
                       <td
                         className="px-6 py-6 text-sm text-red-600"
-                        colSpan={10}
+                        colSpan={11}
                       >
                         {error}
                       </td>
@@ -339,7 +406,7 @@ function UserManagement() {
                     <tr>
                       <td
                         className="px-6 py-6 text-sm text-gray-600"
-                        colSpan={10}
+                        colSpan={11}
                       >
                         No users found.
                       </td>
@@ -404,7 +471,29 @@ function UserManagement() {
                           </span>
                         </td>
                         <td className="px-6 py-4">
+                          <span
+                            className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
+                              user.isDisabled
+                                ? "bg-red-100 text-red-700"
+                                : "bg-emerald-100 text-emerald-700"
+                            }`}
+                          >
+                            {user.isDisabled ? "Disabled" : "Active"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
+                            <button
+                              className={`px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
+                                user.isDisabled
+                                  ? "text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
+                                  : "text-amber-700 bg-amber-50 hover:bg-amber-100"
+                              }`}
+                              title={user.isDisabled ? "Enable User" : "Disable User"}
+                              onClick={() => openToggleModal(user)}
+                            >
+                              {user.isDisabled ? "Enable" : "Disable"}
+                            </button>
                             <button
                               className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                               title="Delete"
@@ -461,6 +550,43 @@ function UserManagement() {
               <button
                 onClick={confirmDelete}
                 className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+      {isToggleModalOpen && userToToggle ? (
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+          onClick={closeToggleModal}
+        >
+          <div
+            className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-semibold text-gray-900">
+              {userToToggle.isDisabled ? "Enable user?" : "Disable user?"}
+            </h2>
+            <p className="text-sm text-gray-600 mt-2">
+              Are you sure you want to {userToToggle.isDisabled ? "enable" : "disable"} {userToToggle.name} ({userToToggle.role})?
+            </p>
+            {toggleError ? (
+              <p className="text-sm text-red-600 mt-3">{toggleError}</p>
+            ) : null}
+            <div className="flex items-center justify-end gap-3 mt-6">
+              <button
+                onClick={closeToggleModal}
+                className="px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmToggleDisabled}
+                className={`px-4 py-2 rounded-lg text-white transition-colors ${
+                  userToToggle.isDisabled ? "bg-emerald-600 hover:bg-emerald-700" : "bg-amber-600 hover:bg-amber-700"
+                }`}
               >
                 Confirm
               </button>
