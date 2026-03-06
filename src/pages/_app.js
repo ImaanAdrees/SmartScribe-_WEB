@@ -1,4 +1,5 @@
 import "@/styles/globals.css";
+import Head from "next/head";
 import { Toaster } from "react-hot-toast";
 import { AdminProvider } from "@/context/AdminContext";
 
@@ -9,6 +10,9 @@ export default function App({ Component, pageProps }) {
   return (
     <AdminProvider>
       <>
+        <Head>
+          <title>SmartScribe</title>
+        </Head>
         <Toaster
           position="top-right"
           reverseOrder={false}
