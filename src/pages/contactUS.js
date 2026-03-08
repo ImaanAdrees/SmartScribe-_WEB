@@ -2,6 +2,8 @@
 import { useState } from "react";
 import Link from "next/link";
 
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+
 export default function ContactUs() {
   const [formData, setFormData] = useState({
     name: "",
@@ -10,16 +12,44 @@ export default function ContactUs() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you can integrate an API call to send the form data
-    setSubmitted(true);
-    setFormData({ name: "", email: "", subject: "", message: "" });
+
+    setIsSubmitting(true);
+    setError("");
+    setSubmitted(false);
+
+    try {
+      const response = await fetch(`${API_URL}/api/contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.message || result.error || "Failed to send your message.",
+        );
+      }
+
+      setSubmitted(true);
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch (submitError) {
+      setError(submitError.message || "Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -34,6 +64,12 @@ export default function ContactUs() {
         {submitted && (
           <div className="bg-green-50 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
             Thank you! Your message has been sent successfully.
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            {error}
           </div>
         )}
 
@@ -104,9 +140,10 @@ export default function ContactUs() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-indigo-600 text-white font-semibold py-3 rounded-lg shadow hover:bg-indigo-700 transition"
+            disabled={isSubmitting}
+            className="w-full bg-indigo-600 text-white font-semibold py-3 rounded-lg shadow hover:bg-indigo-700 transition disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Send Message
+            {isSubmitting ? "Sending..." : "Send Message"}
           </button>
         </form>
 
@@ -114,10 +151,10 @@ export default function ContactUs() {
         <div className="mt-10 text-center text-gray-600 text-sm">
           Or reach us directly at:{" "}
           <Link
-            href="mailto:contact@smartscribe.com"
+            href="mailto:aismartscribe@gmail.com"
             className="text-indigo-600 hover:underline"
           >
-            contact@smartscribe.com
+            aismartscribe@gmail.com
           </Link>
         </div>
       </div>

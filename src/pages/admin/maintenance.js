@@ -180,9 +180,11 @@ function SystemMaintenance() {
       const data = response.data;
       if (data.success) {
         setMaintenanceMode(!maintenanceMode);
-        setSuccess(
-          `Maintenance mode ${!maintenanceMode ? "enabled" : "disabled"}`,
-        );
+        if (!maintenanceMode) {
+          setSuccess("Maintenance mode will activate in 30 seconds.");
+        } else {
+          setSuccess("Maintenance mode disabled.");
+        }
         setTimeout(() => setSuccess(null), 3000);
       } else {
         setError(data.message);
