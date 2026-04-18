@@ -13,7 +13,7 @@ import { getAdminToken } from "@/lib/auth";
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
-export default function TranscriptionGrowth({ daysBack = 7 }) {
+export default function TranscriptionGrowth({ daysBack = 365 }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,6 +29,7 @@ export default function TranscriptionGrowth({ daysBack = 7 }) {
         const mapped = (resp.data.data || []).map((d) => ({
           label: new Date(d.period).toLocaleDateString(),
           transcriptions: d.transcriptions || 0,
+          summaries: d.summaries || 0,
         }));
         setData(mapped);
       } catch (err) {
@@ -64,7 +65,8 @@ export default function TranscriptionGrowth({ daysBack = 7 }) {
               <XAxis dataKey="label" tick={{ fill: "#374151" }} />
               <YAxis allowDecimals={false} tick={{ fill: "#374151" }} />
               <Tooltip />
-              <Line type="monotone" dataKey="transcriptions" stroke="#6366f1" strokeWidth={3} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="transcriptions" stroke="#6366f1" strokeWidth={3} dot={{ r: 3 }} name="Transcriptions" />
+              <Line type="monotone" dataKey="summaries" stroke="#10b981" strokeWidth={3} dot={{ r: 3 }} name="Summaries" />
             </LineChart>
           </ResponsiveContainer>
         </div>

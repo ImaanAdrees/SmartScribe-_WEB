@@ -36,24 +36,34 @@ function AdminDashboard() {
           Authorization: `Bearer ${token}`,
         };
 
-        const [{ data: usersData }, { data: transcriptionLogsData }] =
-          await Promise.all([
-            axios.get(`${API_URL}/api/users`, { headers }),
-            axios.get(
-              `${API_URL}/api/activity/logs?action=Transcription%20Created&limit=1&skip=0`,
-              { headers },
-            ),
-          ]);
+        const [
+          { data: usersData },
+          { data: transcriptionLogsData },
+          { data: summaryLogsData }
+        ] = await Promise.all([
+          axios.get(`${API_URL}/api/users`, { headers }),
+          axios.get(
+            `${API_URL}/api/activity/logs?action=Transcription%20Created&limit=1&skip=0`,
+            { headers },
+          ),
+          axios.get(
+            `${API_URL}/api/activity/logs?action=Summary%20Generated&limit=1&skip=0`,
+            { headers },
+          ),
+        ]);
 
         const users = Array.isArray(usersData?.users) ? usersData.users : [];
         const totalTranscriptions = Number.isFinite(transcriptionLogsData?.total)
           ? transcriptionLogsData.total
           : 0;
+        const totalSummaries = Number.isFinite(summaryLogsData?.total)
+          ? summaryLogsData.total
+          : 0;
 
         setStatsData({
           totalUsers: users.length,
           totalTranscriptions,
-          totalSummaries: 0,
+          totalSummaries,
           totalExports: 0,
         });
       } catch (err) {
@@ -244,10 +254,10 @@ function AdminDashboard() {
           {/* Graph Card 2 */}
           <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
             <h3 className="text-md font-semibold text-gray-800 mb-4">
-              Transcriptions Growth
+              Transcriptions & Summary Growth
             </h3>
             <div>
-              <DynamicTranscriptionGrowth daysBack={7} />
+              <DynamicTranscriptionGrowth daysBack={365} />
             </div>
           </div>
         </div>
