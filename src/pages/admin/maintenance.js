@@ -779,7 +779,7 @@ function SystemMaintenance() {
         )}
 
       {/* Top Stats - Now 3 Columns */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
         {/* System Version */}
         <div className="bg-white rounded-2xl p-6 border border-gray-200">
           <div className="flex items-center justify-between mb-4">
@@ -808,32 +808,6 @@ function SystemMaintenance() {
           <p className="text-sm text-gray-500">
             Last updated: {systemInfo.lastUpdate}
           </p>
-        </div>
-
-        {/* System Uptime */}
-        <div className="bg-white rounded-2xl p-6 border border-gray-200">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-gray-600 uppercase">
-              System Uptime
-            </h3>
-            <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
-              <svg
-                className="w-5 h-5 text-green-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-          </div>
-          <p className="text-3xl font-bold text-gray-900">99.8%</p>
-          <p className="text-sm text-gray-500">{systemInfo.uptime}</p>
         </div>
 
         {/* Database Section moved up */}
