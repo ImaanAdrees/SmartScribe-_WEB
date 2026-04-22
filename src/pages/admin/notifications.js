@@ -618,7 +618,7 @@ function Notifications() {
                 </div>
 
                 {/* Schedule Options */}
-                <div>
+                {/* <div>
                   <label className="block text-sm font-semibold text-gray-900 mb-3">
                     Send Options
                   </label>
@@ -676,7 +676,7 @@ function Notifications() {
                       </div>
                     </label>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Submit Button */}
                 <div className="flex flex-col sm:flex-row gap-4 pt-4">

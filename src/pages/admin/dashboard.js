@@ -18,7 +18,8 @@ function AdminDashboard() {
     totalUsers: 0,
     totalTranscriptions: 0,
     totalSummaries: 0,
-    totalExports: 0,
+    totalExportsPDF: 0,
+    totalExportsTXT: 0,
   });
 
   useEffect(() => {
@@ -39,7 +40,9 @@ function AdminDashboard() {
         const [
           { data: usersData },
           { data: transcriptionLogsData },
-          { data: summaryLogsData }
+          { data: summaryLogsData },
+          { data: exportPDFLogsData },
+          { data: exportTXTLogsData }
         ] = await Promise.all([
           axios.get(`${API_URL}/api/users`, { headers }),
           axios.get(
@@ -48,6 +51,14 @@ function AdminDashboard() {
           ),
           axios.get(
             `${API_URL}/api/activity/logs?action=Summary%20Generated&limit=1&skip=0`,
+            { headers },
+          ),
+          axios.get(
+            `${API_URL}/api/activity/logs?action=Export%20PDF&limit=1&skip=0`,
+            { headers },
+          ),
+          axios.get(
+            `${API_URL}/api/activity/logs?action=Export%20TXT&limit=1&skip=0`,
             { headers },
           ),
         ]);
@@ -59,12 +70,19 @@ function AdminDashboard() {
         const totalSummaries = Number.isFinite(summaryLogsData?.total)
           ? summaryLogsData.total
           : 0;
+        const totalExportsPDF = Number.isFinite(exportPDFLogsData?.total)
+          ? exportPDFLogsData.total
+          : 0;
+        const totalExportsTXT = Number.isFinite(exportTXTLogsData?.total)
+          ? exportTXTLogsData.total
+          : 0;
 
         setStatsData({
           totalUsers: users.length,
           totalTranscriptions,
           totalSummaries,
-          totalExports: 0,
+          totalExportsPDF,
+          totalExportsTXT,
         });
       } catch (err) {
         const message = err?.response?.data?.message || "Failed to load stats";
@@ -163,7 +181,9 @@ function AdminDashboard() {
     },
     {
       title: "Total Exports",
-      value: statsLoading ? "-" : statsData.totalExports.toLocaleString(),
+      value: statsLoading
+        ? "-"
+        : `PDF: ${statsData.totalExportsPDF.toLocaleString()} | TXT: ${statsData.totalExportsTXT.toLocaleString()}`,
       change: statsLoading ? "-" : "Updated",
       icon: (
         <svg
