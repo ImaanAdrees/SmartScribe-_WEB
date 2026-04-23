@@ -1,11 +1,9 @@
 import AdminLayout from "@/components/AdminLayout";
-import { useState, useEffect } from "react";
-import { createPortal } from "react-dom";
-import axios from "axios";
-import { requireAdmin } from "@/lib/serverAuth";
-
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
-
+import { requireAdmin } from "@/lib/serverAuth";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import axios from "axios";
 function SystemMaintenance() {
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [autoBackup, setAutoBackup] = useState(true);
@@ -389,6 +387,38 @@ function SystemMaintenance() {
     }
   };
 
+  // Download PDF with token
+function handleDownloadReport(backup) {
+  const token = localStorage.getItem("adminToken");
+  if (!token) {
+    alert("Not authorized. Please log in again.");
+    return;
+  }
+  fetch(`${API_URL}/api/maintenance/download-backup-report/${backup.backupId}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Failed to download PDF");
+      return res.blob();
+    })
+    .then((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${backup.backupId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    })
+    .catch((err) => {
+      alert("Failed to download PDF report.");
+      console.error(err);
+    });
+}
   const scheduledTasks = [
     {
       task: "Database Backup",
@@ -1200,6 +1230,9 @@ function SystemMaintenance() {
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">
                     Status
                   </th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                    Report
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -1222,6 +1255,19 @@ function SystemMaintenance() {
                         {backup.status.charAt(0).toUpperCase() +
                           backup.status.slice(1)}
                       </span>
+                    </td>
+                    <td className="py-3 px-4">
+                      {backup.reportPdfPath ? (
+                        <button
+                          onClick={() => handleDownloadReport(backup)}
+                          className="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all text-xs"
+                          title="Download PDF Report"
+                        >
+                          Download
+                        </button>
+                      ) : (
+                        <span className="text-gray-400">N/A</span>
+                      )}
                     </td>
                   </tr>
                 ))}

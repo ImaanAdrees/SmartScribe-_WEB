@@ -265,9 +265,6 @@ function SystemAnalytics() {
             <option value={90}>Last 90 Days</option>
             <option value={365}>Last Year</option>
           </select>
-          <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 sm:px-6 py-2 rounded-xl font-semibold flex items-center gap-2 transition-all text-sm sm:text-base">
-            Export Report
-          </button>
         </div>
       </div>
 
