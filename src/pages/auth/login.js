@@ -299,7 +299,7 @@ export default function AdminLogin() {
                 <span className="ml-2 text-sm text-gray-600">Remember me</span>
               </label>
               <Link
-                href="/forgot-password"
+                href="/auth/forgot-password"
                 className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
               >
                 Forgot password?
