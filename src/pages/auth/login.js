@@ -121,39 +121,6 @@ export default function AdminLogin() {
             <div className="absolute w-28 h-28 bg-purple-300 rounded-full blur-2xl animate-float-medium bottom-5 right-5"></div>
           </div>
 
-          {/* Demo Credentials Info */}
-          <div className="mb-6 p-4 bg-indigo-50 border-2 border-indigo-100 rounded-xl relative z-10">
-            <div className="flex items-start gap-3">
-              <svg
-                className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <div className="text-sm">
-                <p className="font-semibold text-indigo-900 mb-1">
-                  Demo Credentials
-                </p>
-                <p className="text-indigo-700">
-                  Email:{" "}
-                  <span className="font-mono font-semibold">
-                    admin@smartscribe.com
-                  </span>
-                </p>
-                <p className="text-indigo-700">
-                  Password:{" "}
-                  <span className="font-mono font-semibold">admin123</span>
-                </p>
-              </div>
-            </div>
-          </div>
 
           <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
             {/* Error Message */}
@@ -289,15 +256,8 @@ export default function AdminLogin() {
               </div>
             </div>
 
-            {/* Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between">
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                />
-                <span className="ml-2 text-sm text-gray-600">Remember me</span>
-              </label>
+            {/* Forgot Password Only - Centered */}
+            <div className="flex items-center justify-center">
               <Link
                 href="/auth/forgot-password"
                 className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
