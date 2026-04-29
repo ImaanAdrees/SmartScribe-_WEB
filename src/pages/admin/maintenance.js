@@ -4,6 +4,8 @@ import { requireAdmin } from "@/lib/serverAuth";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
+import { createPortal } from "react-dom";
+
 function SystemMaintenance() {
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [autoBackup, setAutoBackup] = useState(true);
@@ -576,7 +578,7 @@ function handleDownloadReport(backup) {
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             strokeWidth={2}
-                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                            d="M7 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
                           />
                         </svg>
                       </div>
@@ -969,7 +971,7 @@ function handleDownloadReport(backup) {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        d="M12 8v4l3 3m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
                   </div>
