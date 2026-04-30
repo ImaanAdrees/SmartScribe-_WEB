@@ -81,7 +81,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 pt-8 text-center">
           <p className="text-gray-400 text-sm">
-            © 2025 SmartScribe — Built with passion by
+            © 2026 SmartScribe — Built with passion by
             <span className="text-white font-semibold"> Adan Fatima</span>,
             <span className="text-white font-semibold"> Imaan Adrees</span> &
             <span className="text-white font-semibold"> Maria Zaman</span>
