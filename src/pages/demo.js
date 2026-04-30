@@ -159,6 +159,37 @@ export default function Demo() {
               animation: fadeIn 1s ease-out 0.3s both;
             }
           `}</style>
+
+        </section>
+
+        {/* Demo Video Section */}
+        <section className="max-w-3xl mx-auto px-4 py-12 flex flex-col items-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">Watch SmartScribe in Action</h2>
+          <p className="text-lg text-gray-600 mb-6 text-center max-w-xl">See a quick demo of how SmartScribe works to transcribe and summarize your meetings. Get a feel for the app before you download!</p>
+          <div className="w-full flex justify-center">
+            <video
+              className="rounded-2xl border-2 border-indigo-200 shadow-lg w-full max-w-2xl demo-video-responsive"
+              autoPlay
+              loop
+              muted
+              playsInline
+              controls
+              poster="/demo/demovideo.mp4"
+            >
+              <source src="/demo/demovideo.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            <style jsx>{`
+              .demo-video-responsive {
+                max-height: 520px;
+              }
+              @media (max-width: 640px) {
+                .demo-video-responsive {
+                  max-height: 320px;
+                }
+              }
+            `}</style>
+          </div>
         </section>
 
         {/* Demo Content */}
@@ -548,25 +579,6 @@ export default function Demo() {
                 <div>
                   <strong className="text-gray-900">Android 8.0+</strong>
                   <p className="text-sm">Compatible with most modern devices</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <svg
-                  className="w-6 h-6 text-indigo-600 flex-shrink-0 mt-1"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <div>
-                  <strong className="text-gray-900">100MB Storage</strong>
-                  <p className="text-sm">Minimal space required for app</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
