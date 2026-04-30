@@ -55,6 +55,14 @@ export default function ContactUs() {
   return (
     <div className="min-h-screen bg-gray-50 py-16 px-4">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+        <div className="mb-4">
+          <Link href="/" className="inline-flex items-center text-indigo-600 hover:text-indigo-800 hover:underline">
+            <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Go to Home
+          </Link>
+        </div>
         <h1 className="text-3xl font-bold text-gray-900 mb-4">Contact Us</h1>
         <p className="text-gray-600 mb-8">
           Have a question or need help? Fill out the form below and we’ll get
